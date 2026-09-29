@@ -1,0 +1,82 @@
+# Buildroot package (dl_dir)  ->  Ubuntu source package [subdirectory in bundle]
+# Used by fetch-sources.py only when a source file cannot be obtained with
+# Buildroot's exact hash (neither upstream nor byte-identical Ubuntu orig).
+# The newest Ubuntu version with the same major.minor is preferred, then the
+# newest overall.  Buildroot's own package patches are applied on top.
+busybox          busybox
+e2fsprogs        e2fsprogs
+fltk             fltk1.3
+fontconfig       fontconfig
+freetype         freetype
+gcc              gcc-15
+acl              acl
+attr             attr
+autoconf         autoconf
+binutils         binutils
+gmp              gmp
+kmod             kmod
+libtool          libtool
+libxcb           libxcb
+libxml2          libxml2
+libzlib          zlib
+lzip             lzip
+mpc              mpclib3
+mpfr             mpfr4
+mtools           mtools
+ncurses          ncurses
+pkgconf          pkgconf
+python3          python3.14
+util-linux       util-linux
+util-linux-libs  util-linux
+xapp_bdftopcf    xfonts-utils bdftopcf
+xapp_mkfontscale xfonts-utils mkfontscale
+xapp_xkbcomp     x11-xkb-utils xkbcomp
+xcb-proto        xcb-proto
+xfont_font-util  xfonts-utils font-util
+xfont_encodings  xfonts-encodings
+xfont_font-alias xfonts-base font-alias
+xfont_font-misc-misc   xfonts-base font-misc-misc
+xfont_font-cursor-misc xfonts-base font-cursor-misc
+xutil_util-macros xutils-dev util-macros
+xlib_libX11      libx11
+xlib_libXau      libxau
+xlib_libXdmcp    libxdmcp
+xlib_libfontenc  libfontenc
+xlib_libxkbfile  libxkbfile
+xlib_xtrans      xtrans
+xorgproto        xorgproto
+libdrm           libdrm
+libevdev         libevdev
+libpciaccess     libpciaccess
+libpthread-stubs libpthread-stubs
+mtdev            mtdev
+musl             musl
+pixman           pixman
+xdata_xbitmaps   xbitmaps
+xdriver_xf86-input-evdev xserver-xorg-input-evdev
+xdriver_xf86-video-fbdev xserver-xorg-video-fbdev
+xdriver_xf86-video-vesa  xserver-xorg-video-vesa
+xkeyboard-config xkeyboard-config
+xlib_libICE      libice
+xlib_libSM       libsm
+xlib_libXaw      libxaw
+xlib_libXcursor  libxcursor
+xlib_libXdamage  libxdamage
+xlib_libXext     libxext
+xlib_libXfixes   libxfixes
+xlib_libXfont2   libxfont
+xlib_libXft      xft
+xlib_libXi       libxi
+xlib_libXinerama libxinerama
+xlib_libXmu      libxmu
+xlib_libXpm      libxpm
+xlib_libXrandr   libxrandr
+xlib_libXrender  libxrender
+xlib_libXres     libxres
+xlib_libXt       libxt
+xlib_libXxf86vm  libxxf86vm
+xlib_libxshmfence libxshmfence
+xserver_xorg-server xorg-server
+xterm            xterm
+libgcrypt        libgcrypt20
+libgpg-error     libgpg-error

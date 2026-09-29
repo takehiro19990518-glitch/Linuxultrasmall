@@ -1,0 +1,40 @@
+#!/bin/sh
+# P3 Linux hard disk installer (DESTROYS the target disk).
+# Creates one bootable ext3 partition and installs the system with EXTLINUX.
+set -e
+echo "=== P3 Linux hard disk installer ==="
+echo "Disks:"; for d in /sys/block/sd* /sys/block/hd*; do [ -e "$d" ] && echo "  /dev/${d##*/}  $(( $(cat $d/size) / 2048 )) MB"; done
+printf "Target disk (e.g. /dev/sda), empty to cancel: "; read DISK
+[ -b "$DISK" ] || { echo "cancelled"; sleep 2; exit 1; }
+printf "ALL DATA ON $DISK WILL BE ERASED. Type YES to continue: "; read OK
+[ "$OK" = YES ] || { echo "cancelled"; sleep 2; exit 1; }
+SRC=/mnt/cdrom/p3linux
+[ -f $SRC/rootfs.sqfs ] || { echo "Install medium not found at $SRC"; exit 1; }
+printf 'o\nn\np\n1\n\n\na\nw\n' | fdisk "$DISK"
+sleep 1; mdev -s 2>/dev/null || true
+PART=${DISK}1
+mkfs.ext3 -q -L P3LINUX "$PART"
+mkdir -p /mnt/target /mnt/sqfs
+mount "$PART" /mnt/target
+mount -o loop,ro $SRC/rootfs.sqfs /mnt/sqfs
+echo "Copying files..."; cp -a /mnt/sqfs/. /mnt/target/
+umount /mnt/sqfs
+mkdir -p /mnt/target/boot/extlinux
+cp /mnt/cdrom/boot/bzImage /mnt/target/boot/bzImage
+cat > /mnt/target/boot/extlinux/extlinux.conf <<EOC
+DEFAULT p3linux
+TIMEOUT 30
+PROMPT 1
+LABEL p3linux
+  KERNEL /boot/bzImage
+  APPEND root=LABEL=P3LINUX rootwait rw quiet
+EOC
+echo "/dev/root / ext3 rw,noatime 0 1" > /mnt/target/etc/fstab.p3
+if [ -x $SRC/extlinux ] && [ -f $SRC/mbr.bin ]; then
+  $SRC/extlinux --install /mnt/target/boot/extlinux
+  dd if=$SRC/mbr.bin of="$DISK" bs=440 count=1 conv=notrunc
+else
+  echo "WARNING: extlinux not found on medium; boot loader not installed"
+fi
+umount /mnt/target
+echo "Done. Remove the CD and reboot."; sleep 5

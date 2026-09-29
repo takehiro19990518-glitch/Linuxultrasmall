@@ -1,0 +1,23 @@
+OnDesktop Mouse1 :HideMenus
+OnDesktop Mouse2 :WorkspaceMenu
+OnDesktop Mouse3 :RootMenu
+OnTitlebar Double Mouse1 :Maximize
+OnTitlebar Mouse1 :MacroCmd {Raise} {Focus} {ActivateTab}
+OnTitlebar Move1 :StartMoving
+OnWindow Mod1 Mouse1 :MacroCmd {Raise} {Focus} {StartMoving}
+OnWindowBorder Move1 :StartMoving
+OnLeftGrip Move1 :StartResizing bottomleft
+OnRightGrip Move1 :StartResizing bottomright
+OnWindow Mod1 Mouse3 :MacroCmd {Raise} {Focus} {StartResizing NearestCorner}
+OnToolbar Mouse4 :NextWindow {static groups} (iconhidden=no)
+OnToolbar Mouse5 :PrevWindow {static groups} (iconhidden=no)
+Mod1 Tab :NextWindow {groups} (workspace=[current])
+Mod1 Shift Tab :PrevWindow {groups} (workspace=[current])
+Mod1 F4 :Close
+Mod1 F9 :Minimize
+Mod1 F10 :Maximize
+Control Mod1 t :Exec xterm
+Control Mod1 f :Exec p3-files
+Control Mod1 e :Exec p3-edit
+Control Escape :RootMenu
+Control Mod1 Delete :Exec p3-shutdown

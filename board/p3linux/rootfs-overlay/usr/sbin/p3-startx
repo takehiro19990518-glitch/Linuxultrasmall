@@ -1,0 +1,25 @@
+#!/bin/sh
+# P3 Linux: start X.Org + desktop on tty1 (respawned by init).
+export HOME=/root USER=root DISPLAY=:0 PATH=/usr/bin:/usr/sbin:/bin:/sbin
+LOG=/var/log/p3-session.log
+# "nox" on the kernel command line: text mode only
+if grep -qw nox /proc/cmdline; then exec /sbin/getty 38400 tty1; fi
+DEPTH=16
+for a in $(cat /proc/cmdline); do case $a in p3.depth=*) DEPTH=${a#p3.depth=};; esac; done
+rm -f /tmp/.X0-lock /tmp/.X11-unix/X0
+echo "p3-startx: starting Xorg (depth $DEPTH)" > /dev/console
+/usr/bin/Xorg :0 vt1 -depth "$DEPTH" -nolisten tcp -noreset >$LOG 2>&1 &
+XPID=$!
+i=0
+while [ ! -S /tmp/.X11-unix/X0 ] && [ $i -lt 150 ]; do
+  kill -0 $XPID 2>/dev/null || break
+  sleep 0.2; i=$((i+1))
+done
+if [ ! -S /tmp/.X11-unix/X0 ]; then
+  echo "P3LINUX: X FAILED (see /var/log/Xorg.0.log)" > /dev/console
+  sleep 5; exec /sbin/getty 38400 tty1
+fi
+echo "P3LINUX: X STARTED" > /dev/console
+/usr/bin/p3-session >>$LOG 2>&1
+kill $XPID 2>/dev/null
+wait $XPID

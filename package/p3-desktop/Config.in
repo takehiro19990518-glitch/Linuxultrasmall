@@ -1,0 +1,6 @@
+config BR2_PACKAGE_P3_DESKTOP
+	bool "p3-desktop"
+	depends on BR2_PACKAGE_FLTK
+	help
+	  P3 Linux desktop: start menu, file manager, text editor,
+	  system information and shutdown dialog (FLTK).

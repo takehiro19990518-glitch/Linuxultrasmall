@@ -1,0 +1,4 @@
+#!/bin/sh
+# change screen resolution (needs a driver with RandR support)
+if command -v xrandr >/dev/null && xrandr -s "$1"; then exit 0; fi
+xterm -hold -e sh -c "echo 'Resolution change via RandR not supported by this video driver.'; echo 'Edit /etc/X11/xorg.conf.d/10-p3-screen.conf and restart X.'"

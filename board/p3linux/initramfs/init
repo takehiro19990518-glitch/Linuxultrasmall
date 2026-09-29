@@ -1,0 +1,35 @@
+#!/bin/sh
+# P3 Linux live CD initramfs: find the CD, mount the squashfs root,
+# put a tmpfs overlay on top and switch_root into it.
+export PATH=/bin
+mount -t proc proc /proc
+mount -t sysfs sys /sys
+mount -t devtmpfs dev /dev
+echo "P3 Linux: searching for boot medium..."
+found=
+n=0
+while [ -z "$found" ] && [ $n -lt 30 ]; do
+  for d in /dev/sr* /dev/sd* /dev/hd* /dev/vd*; do
+    [ -b "$d" ] || continue
+    for fs in iso9660 ext4 ext3 ext2 vfat; do
+      if mount -t $fs -o ro "$d" /medium 2>/dev/null; then
+        if [ -f /medium/p3linux/rootfs.sqfs ]; then found=$d; break 2; fi
+        umount /medium
+      fi
+    done
+  done
+  n=$((n+1)); sleep 1
+done
+if [ -z "$found" ]; then
+  echo "P3 Linux: boot medium not found. Dropping to shell."; exec sh
+fi
+echo "P3 Linux: found medium on $found"
+mount -t squashfs -o ro,loop /medium/p3linux/rootfs.sqfs /ro || { echo "squashfs mount failed"; exec sh; }
+mount -t tmpfs -o mode=0755 tmpfs /rw
+mkdir -p /rw/upper /rw/work
+mount -t overlay -o lowerdir=/ro,upperdir=/rw/upper,workdir=/rw/work overlay /newroot || { echo "overlay failed"; exec sh; }
+mkdir -p /newroot/mnt/cdrom
+mount --move /medium /newroot/mnt/cdrom
+umount /proc /sys
+mount --move /dev /newroot/dev 2>/dev/null || umount /dev
+exec switch_root /newroot /sbin/init

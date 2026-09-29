@@ -1,0 +1,12 @@
+#!/bin/sh
+# P3 Linux desktop session: fluxbox + start button + welcome window
+export HOME=${HOME:-/root}
+if [ ! -d "$HOME/.fluxbox" ]; then
+  mkdir -p "$HOME/.fluxbox"
+  cp -a /etc/p3linux/fluxbox/. "$HOME/.fluxbox/"
+fi
+export XENVIRONMENT=/etc/p3linux/Xresources
+p3-start &
+[ -e "$HOME/.p3-no-welcome" ] || p3-sysinfo &
+( sleep 3; echo "P3LINUX: DESKTOP READY" > /dev/console ) &
+exec fluxbox

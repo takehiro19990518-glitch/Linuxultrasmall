@@ -1,0 +1,17 @@
+[begin] (P3 Linux)
+  [exec] (Terminal) {xterm}
+  [exec] (File Manager) {p3-files}
+  [exec] (Text Editor) {p3-edit}
+  [exec] (System Information) {p3-sysinfo}
+  [separator]
+  [submenu] (Settings)
+    [exec] (Screen 640x480) {p3-setres 640x480}
+    [exec] (Screen 800x600) {p3-setres 800x600}
+    [exec] (Screen 1024x768) {p3-setres 1024x768}
+    [config] (Window Manager)
+  [end]
+  [reconfig] (Reload Desktop Config)
+  [separator]
+  [exec] (Restart) {reboot}
+  [exec] (Shut Down) {poweroff}
+[end]

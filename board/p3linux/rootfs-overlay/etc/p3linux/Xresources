@@ -1,0 +1,7 @@
+XTerm*faceName: DejaVu Sans Mono
+XTerm*faceSize: 10
+XTerm*background: black
+XTerm*foreground: #d0d0d0
+XTerm*scrollBar: true
+XTerm*saveLines: 500
+XTerm*title: Terminal

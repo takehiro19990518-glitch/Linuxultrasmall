@@ -1,0 +1,9 @@
+[app] (class=p3-start)
+  [Deco]         {NONE}
+  [Sticky]       {yes}
+  [Layer]        {2}
+  [FocusHidden]  {yes}
+  [IconHidden]   {yes}
+  [Position]     (LowerLeft) {0 0}
+  [Tab]          {no}
+[end]
