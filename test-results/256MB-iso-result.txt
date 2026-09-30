@@ -1,0 +1,16 @@
+PASS 1. BIOS boot from ISO (SYSLINUX) 
+PASS 2. Linux kernel boot 6.12.111
+PASS 3. root filesystem mount (CD + squashfs + overlay) 
+PASS 4. init (BusyBox init + rc scripts) 
+PASS 5. X.Org start 
+PASS 6. GUI desktop (fluxbox + start menu) 23s after power-on
+PASS    desktop processes (Xorg fluxbox p3-start p3-sysinfo) 162 165 168 169
+PASS 7. keyboard (Ctrl+Alt+T opens terminal) 
+PASS 9. terminal (xterm accepts typed command) 
+PASS 8. mouse (PS/2 mouse device in X, pointer injected) 22 log lines
+PASS 10. file manager (p3-files) 
+PASS 11. text editor (p3-edit) 
+PASS    memory in use after desktop start free -m | sed -n 2p; echo __END78445__$?
+PASS    network (DHCP + ping gateway) 
+PASS 13. reboot (system comes back) 
+PASS 12. shutdown (poweroff turns the VM off) 
