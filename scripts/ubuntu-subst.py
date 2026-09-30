@@ -152,8 +152,17 @@ def _gmp_fixup(root):
     open(os.path.join(root, "doc", "Makefile.am"), "a").close()
 
 
+def _gawk_fixup(root):
+    # Ubuntu's gawk is "+dfsg" (GFDL manual removed); make doc/ a no-op
+    d = os.path.join(root, "doc")
+    os.makedirs(d, exist_ok=True)
+    with open(os.path.join(d, "Makefile.in"), "w") as f:
+        f.write("all install install-strip install-data install-exec uninstall check installcheck "
+                "clean distclean mostlyclean maintainer-clean info dvi pdf html:\n\t@:\n")
+
+
 # per-package fixups for Debian-modified (dfsg) source trees
-FIXUPS = {"gmp": _gmp_fixup}
+FIXUPS = {"gmp": _gmp_fixup, "gawk": _gawk_fixup}
 
 
 def patch_dirs(pdir, ver):
