@@ -80,5 +80,4 @@ xserver_xorg-server xorg-server
 xterm            xterm
 libgcrypt        libgcrypt20
 libgpg-error     libgpg-error
-gawk             gawk
 xapp_xmodmap     x11-xserver-utils xmodmap
