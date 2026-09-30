@@ -168,10 +168,10 @@ def trial_patches(root, pdir, ver):
     for d in patch_dirs(pdir, ver):
         for pf in sorted(f for f in os.listdir(d) if f.endswith(".patch")):
             full = os.path.join(d, pf)
-            r = subprocess.run(["patch", "-p1", "-N", "-s", "--dry-run", "-d", root, "-i", full],
+            r = subprocess.run(["patch", "-F0", "-p1", "-N", "-s", "--dry-run", "-d", root, "-i", full],
                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             if r.returncode == 0:
-                subprocess.check_call(["patch", "-p1", "-N", "-s", "-d", root, "-i", full],
+                subprocess.check_call(["patch", "-F0", "-p1", "-N", "-s", "-d", root, "-i", full],
                                       stdout=subprocess.DEVNULL)
                 applied.append(full)
             else:
