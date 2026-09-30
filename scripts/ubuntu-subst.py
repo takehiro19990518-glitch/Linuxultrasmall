@@ -214,6 +214,23 @@ def main():
             fetch(f"{UBUNTU}/{path}", ufile)
         if sha256(ufile) != h:
             sys.exit(f"SHA256 mismatch for {path}")
+        # Ubuntu often ships the pristine upstream tarball: if it matches any
+        # hash Buildroot already knows for this file, use it unchanged.
+        known = []
+        for hfile in pkg.get("hashes", []):
+            hp = os.path.join(brdir, hfile)
+            if os.path.exists(hp):
+                known += [l.split() for l in open(hp) if len(l.split()) == 3 and l.split()[2] == src_file]
+        if known and os.path.splitext(uname)[1] == os.path.splitext(src_file)[1]:
+            if all(hashlib.new(a, open(ufile, "rb").read()).hexdigest() == v for a, v, _ in known):
+                os.makedirs(os.path.join(dldir, dld), exist_ok=True)
+                shutil.copyfile(ufile, exact)
+                lock[dld] = [path, h, bver]
+                report.append(f"{dld:28s} {bver:>14s} == pristine upstream  {path}")
+                print(report[-1])
+                done.add(dld)
+                write_lock(lock)
+                continue
         tmp = tempfile.mkdtemp(prefix="p3subst-")
         try:
             with tarfile.open(ufile) as t:
@@ -270,6 +287,9 @@ def main():
         if newver != bver and os.path.isdir(vdir) and not os.path.exists(os.path.join(pdir, newver)):
             shutil.copytree(vdir, os.path.join(pdir, newver))
         hf = os.path.join(pdir, raw + ".hash")
+        if os.path.exists(hf):  # drop stale lines for the same file name
+            keep = [l for l in open(hf) if not (len(l.split()) == 3 and l.split()[2] == new_src)]
+            open(hf, "w").writelines(keep)
         with open(hf, "a") as f:
             f.write(f"# P3LINUX: repacked from Ubuntu {path} (sha256 {h})\n"
                     f"sha256  {sha256(dest)}  {new_src}\n")
