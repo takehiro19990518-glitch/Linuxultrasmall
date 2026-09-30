@@ -17,3 +17,10 @@ define P3_HOST_MKFONTDIR_WRAPPER
 	chmod 0755 $(HOST_DIR)/bin/mkfontdir
 endef
 HOST_XAPP_MKFONTSCALE_POST_INSTALL_HOOKS += P3_HOST_MKFONTDIR_WRAPPER
+
+# musl resolves all symbols at dlopen() time unless a module is linked lazily.
+# X.Org video drivers reference symbols of sub-modules (int10/vbe, fbdevhw,
+# vgahw) that the server loads only later, so link them with -z lazy
+# (the toolchain wrapper's -z now comes first; the last -z option wins).
+P3_LAZY_PKGS = XDRIVER_XF86_VIDEO_VESA XDRIVER_XF86_VIDEO_FBDEV
+$(foreach p,$(P3_LAZY_PKGS),$(eval $(p)_CONF_ENV += LDFLAGS="$$(TARGET_LDFLAGS) -Wl,-z,lazy"))

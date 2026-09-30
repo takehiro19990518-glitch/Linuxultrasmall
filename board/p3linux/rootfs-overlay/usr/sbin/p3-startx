@@ -4,7 +4,9 @@ export HOME=/root USER=root DISPLAY=:0 PATH=/usr/bin:/usr/sbin:/bin:/sbin
 LOG=/var/log/p3-session.log
 # "nox" on the kernel command line: text mode only
 if grep -qw nox /proc/cmdline; then exec /sbin/getty 38400 tty1; fi
-DEPTH=16
+# KMS drivers (modesetting) usually need 24/32bpp; VESA/fbdev on old cards
+# run at 16bpp to save video and system memory.
+if [ -e /dev/dri/card0 ]; then DEPTH=24; else DEPTH=16; fi
 for a in $(cat /proc/cmdline); do case $a in p3.depth=*) DEPTH=${a#p3.depth=};; esac; done
 rm -f /tmp/.X0-lock /tmp/.X11-unix/X0
 echo "p3-startx: starting Xorg (depth $DEPTH)" > /dev/console

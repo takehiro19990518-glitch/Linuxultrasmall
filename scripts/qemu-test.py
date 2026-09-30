@@ -21,7 +21,7 @@ RAM = int(sys.argv[1]) if len(sys.argv) > 1 else 256
 MEDIUM = sys.argv[2] if len(sys.argv) > 2 else "iso"
 OUT = os.path.join(TOP, "output", "test")
 os.makedirs(OUT, exist_ok=True)
-TAG = f"{RAM}MB-{MEDIUM}"
+TAG = f"{RAM}MB-{MEDIUM}" + ("-" + os.environ["P3_APPEND"].split()[0].replace("=", "") if os.environ.get("P3_APPEND") else "")
 SER = os.path.join(OUT, f"{TAG}.serial.sock")
 MON = os.path.join(OUT, f"{TAG}.mon.sock")
 LOG = os.path.join(OUT, f"{TAG}.serial.log")
@@ -67,6 +67,7 @@ class Chan:
             self.read()
             m = re.search(pattern, self.buf)
             if m:
+                self.before = self.buf[:m.start()]
                 self.buf = self.buf[m.end():]
                 return m
             time.sleep(0.2)
@@ -101,7 +102,8 @@ def sh(cmd, timeout=20):
     m = S.expect(re.escape(marker) + r"(\d+)", timeout)
     if not m:
         return None, ""
-    return int(m.group(1)), S.buf
+    out = S.before.split("\n", 1)[1] if "\n" in S.before else ""  # drop echoed command
+    return int(m.group(1)), out
 
 
 def main():
@@ -124,6 +126,11 @@ def main():
         qemu += ["-drive", f"file={disk},format=raw,if=ide,index=0",
                  "-drive", f"file={os.path.join(IMG, 'P3-Linux.iso')},media=cdrom,if=ide,index=2",
                  "-boot", "d"]
+    if os.environ.get("P3_APPEND"):
+        # direct kernel boot with an extra command line (e.g. "nomodeset" to
+        # exercise the VESA driver path used on real P3-era video cards)
+        qemu += ["-kernel", os.path.join(IMG, "bzImage"), "-initrd", os.path.join(IMG, "initrd.gz"),
+                 "-append", "console=tty0 console=ttyS0,115200 loglevel=4 net.ifnames=0 " + os.environ["P3_APPEND"]]
     if os.environ.get("QEMU_ACCEL"):
         qemu += ["-accel", os.environ["QEMU_ACCEL"]]
     print(" ".join(qemu), flush=True)
@@ -133,7 +140,10 @@ def main():
     M = Chan(MON)
     tmo = int(os.environ.get("BOOT_TIMEOUT", "600"))
     try:
-        check("1. BIOS boot from " + MEDIUM.upper() + " (SYSLINUX)", S.expect(r"(ISO|SYS)LINUX \d", 120) is not None)
+        if os.environ.get("P3_APPEND"):
+            check("1. direct kernel boot (QEMU -kernel, " + os.environ["P3_APPEND"] + ")", True)
+        else:
+            check("1. BIOS boot from " + MEDIUM.upper() + " (SYSLINUX)", S.expect(r"(ISO|SYS)LINUX \d", 120) is not None)
         m = S.expect(r"(Linux version|P3 Linux: kernel) (\S+)", 300)
         check("2. Linux kernel boot", m is not None, m.group(2) if m else "")
         if MEDIUM == "iso":
@@ -157,7 +167,7 @@ def main():
         S.expect(r"# ", 20)
         sh("export DISPLAY=:0 PS1='# '")
         _, out = sh("pidof Xorg fluxbox p3-start p3-sysinfo")
-        check("   desktop processes", len(out.split()) >= 3, out.strip().splitlines()[0] if out.strip() else "")
+        check("   desktop processes (Xorg fluxbox p3-start p3-sysinfo)", len(out.split()) >= 3, out.strip())
         # 7. keyboard: Ctrl+Alt+T is bound to xterm in fluxbox
         sh("pkill p3-sysinfo")
         mon("sendkey ctrl-alt-t")
