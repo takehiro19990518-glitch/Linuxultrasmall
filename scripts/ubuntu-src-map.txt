@@ -34,7 +34,7 @@ xapp_xkbcomp     x11-xkb-utils xkbcomp
 xcb-proto        xcb-proto
 xfont_font-util  xfonts-utils font-util
 xfont_encodings  xfonts-encodings
-xfont_font-alias xfonts-base font-alias
+# xfont_font-alias: not in Ubuntu; dropped via patches/buildroot (aliases in rootfs overlay)
 xfont_font-misc-misc   xfonts-base font-misc-misc
 xfont_font-cursor-misc xfonts-base font-cursor-misc
 xutil_util-macros xutils-dev util-macros
