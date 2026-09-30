@@ -136,7 +136,7 @@ def detect_version(root):
 def repack(root, topname, dest):
     ext = dest.rsplit(".tar.", 1)[-1] if ".tar." in dest else ("gz" if dest.endswith(".tgz") else None)
     raw = dest + ".tar"
-    subprocess.check_call(["tar", "--sort=name", "--mtime=@0", "--owner=0", "--group=0",
+    subprocess.check_call(["tar", "--sort=name", "--mtime=@1767225600", "--clamp-mtime", "--owner=0", "--group=0",
                            "--numeric-owner", "--format=gnu", "-cf", raw,
                            "--transform", f"s,^\\.,{topname},", "-C", root, "."])
     comp = {"xz": ["xz", "-T1", "-6", "-f"], "gz": ["gzip", "-n", "-9", "-f"],
