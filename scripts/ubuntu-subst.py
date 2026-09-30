@@ -231,8 +231,12 @@ def main():
                 done.add(dld)
                 write_lock(lock)
                 continue
+        cached = os.path.join(dldir, dld, src_file.replace(bver, newver)) if newver else None
         tmp = tempfile.mkdtemp(prefix="p3subst-")
         try:
+            if cached and os.path.exists(cached) and newver != bver:
+                new_src, dest = os.path.basename(cached), cached  # repacked on an earlier run
+                raise StopIteration
             with tarfile.open(ufile) as t:
                 t.extractall(tmp, filter="tar") if hasattr(tarfile, "data_filter") else t.extractall(tmp)
             tops = os.listdir(tmp)
@@ -259,6 +263,8 @@ def main():
             dest = os.path.join(dldir, dld, new_src)
             os.makedirs(os.path.dirname(dest), exist_ok=True)
             repack(root, new_src.split(".t")[0] if not new_src.endswith("-source.tar.bz2") else f"{upname}-{newver}", dest)
+        except StopIteration:
+            pass
         finally:
             shutil.rmtree(tmp)
         lock[dld] = [path, h, newver]
