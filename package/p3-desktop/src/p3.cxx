@@ -444,7 +444,6 @@ static int app_files(int argc, char **argv) {
     F.status->box(FL_THIN_DOWN_BOX);
     F.win->resizable(F.list);
     F.win->end();
-    Fl_File_Icon::load_system_icons();
     const char *h = getenv("HOME");
     fm_go(argc > 1 ? argv[1] : (h ? h : "/"));
     F.win->show();
