@@ -16,6 +16,12 @@ grep -q p3-startx "$T/etc/inittab" || \
 grep -q '^ttyS0::' "$T/etc/inittab" || \
   echo 'ttyS0::respawn:/sbin/getty -L ttyS0 115200 vt100' >> "$T/etc/inittab"
 chmod 0755 "$T"/usr/sbin/p3-* "$T"/usr/bin/p3-session "$T"/usr/bin/p3-setres "$T"/usr/sbin/p3-install 2>/dev/null || true
+# X is started by /usr/sbin/p3-startx from inittab, not by Buildroot's script
+rm -f "$T/etc/init.d/S40xorg"
+# groups referenced by eudev rules
+for g in input:x:101: kvm:x:102: sgx:x:103: render:x:104:; do
+  grep -q "^${g%%:*}:" "$T/etc/group" || echo "$g" >> "$T/etc/group"
+done
 mkdir -p "$T/mnt/cdrom" "$T/mnt/hd" "$T/mnt/floppy"
 # docs / man pages are useless on a 64MB machine
 rm -rf "$T/usr/share/man" "$T/usr/share/doc" "$T/usr/share/info"

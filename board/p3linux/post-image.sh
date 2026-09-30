@@ -12,14 +12,14 @@ ISOLINUX_BIN=${ISOLINUX_BIN:-/usr/lib/ISOLINUX/isolinux.bin}
 ISOHDPFX=${ISOHDPFX:-/usr/lib/ISOLINUX/isohdpfx.bin}
 MBR_BIN=${MBR_BIN:-/usr/lib/syslinux/mbr/mbr.bin}
 VERSION=$(sed -n 's/^VERSION="\(.*\)"/\1/p' "$T/etc/os-release")
-CMDLINE_COMMON="console=tty0 console=ttyS0,115200 vga=0x314 loglevel=4"
+CMDLINE_COMMON="console=tty0 console=ttyS0,115200 vga=0x314 loglevel=4 net.ifnames=0"
 
 # ---------- initramfs (busybox + musl only) ----------
 R="$IMG/initramfs-root"
 rm -rf "$R"; mkdir -p "$R"/{bin,lib,proc,sys,dev,medium,ro,rw,newroot}
 cp -a "$T/bin/busybox" "$R/bin/"
 cp -aL "$T/lib/ld-musl-i386.so.1" "$R/lib/"
-for a in sh mount umount mkdir sleep switch_root cat echo ls; do ln -sf busybox "$R/bin/$a"; done
+for a in sh mount umount mkdir sleep switch_root cat echo ls uname; do ln -sf busybox "$R/bin/$a"; done
 install -m 0755 "$BOARD/initramfs/init" "$R/init"
 (cd "$R" && find . | LC_ALL=C sort | cpio --quiet -o -H newc --owner=0:0 | gzip -9n) > "$IMG/initrd.gz"
 

@@ -5,6 +5,7 @@ export PATH=/bin
 mount -t proc proc /proc
 mount -t sysfs sys /sys
 mount -t devtmpfs dev /dev
+echo "P3 Linux: kernel $(uname -r) booted"
 echo "P3 Linux: searching for boot medium..."
 found=
 n=0

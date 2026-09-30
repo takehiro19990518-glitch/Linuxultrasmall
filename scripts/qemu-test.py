@@ -133,9 +133,9 @@ def main():
     M = Chan(MON)
     tmo = int(os.environ.get("BOOT_TIMEOUT", "600"))
     try:
-        check("1. BIOS boot from " + MEDIUM.upper(), S.expect(r"Linux version \S+", 120) is not None)
-        m = re.search(r"Linux version (\S+)", open(LOG).read())
-        check("2. Linux kernel boot", m is not None, m.group(1) if m else "")
+        check("1. BIOS boot from " + MEDIUM.upper() + " (SYSLINUX)", S.expect(r"(ISO|SYS)LINUX \d", 120) is not None)
+        m = S.expect(r"(Linux version|P3 Linux: kernel) (\S+)", 300)
+        check("2. Linux kernel boot", m is not None, m.group(2) if m else "")
         if MEDIUM == "iso":
             check("3. root filesystem mount (CD + squashfs + overlay)",
                   S.expect(r"found medium on|VFS: Mounted root", tmo) is not None)
@@ -204,7 +204,7 @@ def main():
         # 13. reboot
         S.buf = ""
         sh("reboot", 5)
-        ok = S.expect(r"Linux version", 180) is not None
+        ok = S.expect(r"(ISO|SYS)LINUX \d", 180) is not None
         check("13. reboot (system comes back)", ok)
         d = S.expect(r"P3LINUX: DESKTOP READY", tmo)
         # 12. shutdown
