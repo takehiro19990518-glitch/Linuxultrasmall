@@ -146,6 +146,16 @@ def repack(root, topname, dest):
     os.replace(produced, dest)
 
 
+def _gmp_fixup(root):
+    # Ubuntu's gmp is "+dfsg" (GFDL manual removed); give automake an empty doc/
+    os.makedirs(os.path.join(root, "doc"), exist_ok=True)
+    open(os.path.join(root, "doc", "Makefile.am"), "a").close()
+
+
+# per-package fixups for Debian-modified (dfsg) source trees
+FIXUPS = {"gmp": _gmp_fixup}
+
+
 def patch_dirs(pdir, ver):
     d = os.path.join(pdir, ver)
     return [d] if os.path.isdir(d) else [pdir]
@@ -284,6 +294,8 @@ def main():
             if not newver:
                 newver = (detect_version(root) if subdir else None) or \
                     upstream_version(re.match(re.escape(usrc) + r"_(.+?)(\.orig)?\.tar", uname).group(1))
+            if dld in FIXUPS:
+                FIXUPS[dld](root)
             shutil.rmtree(os.path.join(root, "debian"), ignore_errors=True)
             shutil.rmtree(os.path.join(root, ".git"), ignore_errors=True)
             if skipped is None:
