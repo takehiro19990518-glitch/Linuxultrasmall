@@ -107,6 +107,9 @@ def choose(cands, src, bver):
         m = re.match(re.escape(src) + r"_(.+?)(\.orig)?\.tar\.\w+$", name)
         if m:
             vers.append((upstream_version(m.group(1)), m.group(1), name, path, h))
+    # ignore date snapshots (e.g. gcc-15_15-20250404) unless Buildroot uses one
+    if not re.search(r"20\d{6}", bver):
+        vers = [v for v in vers if not re.search(r"(^|[-+~.])20\d{6}", v[0])]
     if not vers:
         return None
     exact = [v for v in vers if v[0] == bver]
