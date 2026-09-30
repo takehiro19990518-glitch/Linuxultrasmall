@@ -10,3 +10,10 @@ P3_GNU17_PKGS = XLIB_LIBXT XLIB_LIBXEXT XLIB_LIBXMU XLIB_LIBXKBFILE \
 	XLIB_LIBXPM XLIB_LIBXFT XLIB_LIBXFONT2 XLIB_LIBXAU XAPP_XKBCOMP \
 	XAPP_MKFONTSCALE XAPP_BDFTOPCF XDRIVER_XF86_VIDEO_FBDEV XTERM
 $(foreach p,$(P3_GNU17_PKGS),$(eval $(p)_CONF_ENV += CFLAGS="$$(TARGET_CFLAGS) -std=gnu17"))
+
+# mkfontscale < 1.2 (Ubuntu's version) does not install the mkfontdir wrapper
+define P3_HOST_MKFONTDIR_WRAPPER
+	printf '#!/bin/sh\nexec "$$(dirname "$$0")/mkfontscale" -b -s -l "$$@"\n' > $(HOST_DIR)/bin/mkfontdir
+	chmod 0755 $(HOST_DIR)/bin/mkfontdir
+endef
+HOST_XAPP_MKFONTSCALE_POST_INSTALL_HOOKS += P3_HOST_MKFONTDIR_WRAPPER
