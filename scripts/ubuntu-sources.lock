@@ -8,6 +8,7 @@ e2fsprogs pool/main/e/e2fsprogs/e2fsprogs_1.47.4.orig.tar.gz 2cec05f39c20ee621f1
 fltk pool/universe/f/fltk1.3/fltk1.3_1.3.8.orig.tar.gz f3c1102b07eb0e7a50538f9fc9037c18387165bc70d4b626e94ab725b9d4d1bf 1.3.8
 fontconfig pool/main/f/fontconfig/fontconfig_2.17.1.orig.tar.gz f07504cef87f171ee1748352e2df9b9f125352f620fa0d03a9284306ea2c40a4 2.17.1
 freetype pool/main/f/freetype/freetype_2.14.2+dfsg.orig.tar.xz 9a2bdc2c992fa82a309eccf5e8bcbf2a380a98ba22f9f2ec7e56767739a19a0a 2.14.2
+gawk pool/main/g/gawk/gawk_5.3.2.orig.tar.xz 3b2a95bc6de68e2dc833ce547e366d62001274f8b892c6424f34f70d321cda70 5.3.2
 gcc pool/main/g/gcc-15/gcc-15_15.2.0.orig.tar.gz 3063dafdeed9fb9565f099b2560379bce08dae2b461ed4e30dd8d999f5f5747c 15.2.0
 gmp pool/main/g/gmp/gmp_6.3.0+dfsg.orig.tar.xz bd2966e6d277f79328e894a5a9f3ba3fbf2ed2be81def5f48623e30c23fb1572 6.3.0
 kmod pool/main/k/kmod/kmod_34.2.orig.tar.xz 012d16e2099115486d8aa9f2c2a23d058d3d0cad83113a60512647d25d3869e8 34.2
@@ -32,6 +33,7 @@ util-linux pool/main/u/util-linux/util-linux_2.41.3.orig.tar.xz 3330d873f0fceb55
 xapp_bdftopcf pool/main/x/xfonts-utils/xfonts-utils_7.7+6build2.tar.gz afc12fd9c2719b3544d8b3d71415060062dc271b1f26589f2c00698b58ca886e 1.1
 xapp_mkfontscale pool/main/x/xfonts-utils/xfonts-utils_7.7+6build2.tar.gz afc12fd9c2719b3544d8b3d71415060062dc271b1f26589f2c00698b58ca886e 1.1.3
 xapp_xkbcomp pool/main/x/x11-xkb-utils/x11-xkb-utils_7.7+5build4.tar.gz 59e3c4bd741c028412726d0068a07808983832980aeaf57bcf779676666fefaf 1.4.3
+xapp_xmodmap pool/main/x/x11-xserver-utils/x11-xserver-utils_7.7+10build2.tar.xz c84e48e30230ac74eb7fb1014637c9467f717bace33d44bee1e7d8493cc3919d 1.0.11
 xcb-proto pool/universe/x/xcb-proto/xcb-proto_1.17.0.orig.tar.gz 392d3c9690f8c8202a68fdb89c16fd55159ab8d65000a6da213f4a1576e97a16 1.17.0
 xdata_xbitmaps pool/main/x/xbitmaps/xbitmaps_1.1.1.orig.tar.gz 3bc89e05be4179ce4d3dbba1ae554da4591d41f7a489d9e2735a18cfd8378188 1.1.1
 xdriver_xf86-input-evdev pool/universe/x/xserver-xorg-input-evdev/xserver-xorg-input-evdev_2.11.0.orig.tar.gz 6bf1d288f15f5c7db87e8ad62a75ef372789897be11d8a9706c4408b863a2add 2.11.0
