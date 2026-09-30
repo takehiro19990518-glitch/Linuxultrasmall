@@ -247,6 +247,8 @@ def main():
         lock[dld] = [path, h, newver]
         # patch the Buildroot package
         pdir = os.path.join(brdir, pkg["package_dir"]) if not os.path.isabs(pkg["package_dir"]) else pkg["package_dir"]
+        if os.path.basename(pdir.rstrip("/")) in ("gcc-final", "gcc-initial"):
+            pdir = os.path.dirname(pdir.rstrip("/"))  # version lives in package/gcc/gcc.mk
         raw = os.path.basename(pdir.rstrip("/"))
         mk = os.path.join(pdir, raw + ".mk")
         var = re.sub(r"[^A-Za-z0-9]", "_", raw).upper() + "_VERSION"
@@ -258,7 +260,7 @@ def main():
             var = re.sub(r"[^A-Za-z0-9]", "_", raw).upper() + "_VERSION"
         if newver != bver and os.path.exists(mk):
             t = open(mk).read()
-            t2, n = re.subn(rf"^{var}\s*=.*$", f"{var} = {newver}  # P3LINUX: Ubuntu archive source", t, count=1, flags=re.M)
+            t2, n = re.subn(rf"^{var}\s*=.*$", f"# P3LINUX: Ubuntu archive source\n{var} = {newver}", t, count=1, flags=re.M)
             if n:
                 open(mk, "w").write(t2)
             else:
