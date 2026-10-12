@@ -1,0 +1,13 @@
+--- a/package/libgpg-error/libgpg-error.mk	2026-09-30 02:34:12.585762313 +0000
++++ b/package/libgpg-error/libgpg-error.mk	2026-09-30 02:34:12.592900161 +0000
+@@ -12,7 +12,9 @@
+ LIBGPG_ERROR_CPE_ID_VENDOR = gnupg
+ LIBGPG_ERROR_INSTALL_STAGING = YES
+ LIBGPG_ERROR_CONFIG_SCRIPTS = gpg-error-config
+-LIBGPG_ERROR_DEPENDENCIES = $(TARGET_NLS_DEPENDENCIES) host-gawk
++# P3LINUX: use the build host gawk (see BUILD.md)
++LIBGPG_ERROR_DEPENDENCIES = $(TARGET_NLS_DEPENDENCIES)
++LIBGPG_ERROR_CONF_ENV += AWK=gawk
+ LIBGPG_ERROR_CONF_OPTS = \
+ 	cross_compiling=yes \
+ 	--host=$(BR2_PACKAGE_LIBGPG_ERROR_SYSCFG) \

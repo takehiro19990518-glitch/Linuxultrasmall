@@ -1,0 +1,10 @@
+--- a/package/libglib2/libglib2.mk	2026-10-12 11:53:07.338325166 +0000
++++ b/package/libglib2/libglib2.mk	2026-10-12 11:53:13.114094635 +0000
+@@ -38,7 +38,6 @@
+ 	libffi pcre2 zlib $(TARGET_NLS_DEPENDENCIES)
+ 
+ HOST_LIBGLIB2_DEPENDENCIES = \
+-	host-gettext \
+ 	host-libffi \
+ 	host-pcre2 \
+ 	host-pkgconf \

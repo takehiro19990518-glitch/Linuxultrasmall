@@ -1,0 +1,19 @@
+diff --git a/package/fontconfig/fontconfig.mk b/package/fontconfig/fontconfig.mk
+index 639f6ed5..e79cdebd 100644
+--- a/package/fontconfig/fontconfig.mk
++++ b/package/fontconfig/fontconfig.mk
+@@ -11,12 +11,13 @@ FONTCONFIG_INSTALL_STAGING = YES
+ FONTCONFIG_DEPENDENCIES = freetype expat host-pkgconf host-gperf \
+ 	$(TARGET_NLS_DEPENDENCIES)
+ HOST_FONTCONFIG_DEPENDENCIES = host-freetype host-expat host-pkgconf \
+-	host-gperf host-gettext
++	host-gperf
+ FONTCONFIG_LICENSE = fontconfig license
+ FONTCONFIG_LICENSE_FILES = COPYING
+ FONTCONFIG_CPE_ID_VALID = YES
+ 
+ HOST_FONTCONFIG_CONF_OPTS = \
++	-Dnls=disabled \
+ 	-Dtests=disabled \
+ 	-Ddoc=disabled
+ 

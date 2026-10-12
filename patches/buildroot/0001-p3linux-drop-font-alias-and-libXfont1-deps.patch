@@ -1,0 +1,27 @@
+diff --git a/package/x11r7/xapp_bdftopcf/xapp_bdftopcf.mk b/package/x11r7/xapp_bdftopcf/xapp_bdftopcf.mk
+index 990e6731..1f9f6be5 100644
+--- a/package/x11r7/xapp_bdftopcf/xapp_bdftopcf.mk
++++ b/package/x11r7/xapp_bdftopcf/xapp_bdftopcf.mk
+@@ -9,8 +9,8 @@ XAPP_BDFTOPCF_SOURCE = bdftopcf-$(XAPP_BDFTOPCF_VERSION).tar.xz
+ XAPP_BDFTOPCF_SITE = https://xorg.freedesktop.org/archive/individual/util
+ XAPP_BDFTOPCF_LICENSE = MIT
+ XAPP_BDFTOPCF_LICENSE_FILES = COPYING
+-XAPP_BDFTOPCF_DEPENDENCIES = xlib_libXfont
+-HOST_XAPP_BDFTOPCF_DEPENDENCIES = host-xlib_libXfont
++XAPP_BDFTOPCF_DEPENDENCIES = xorgproto
++HOST_XAPP_BDFTOPCF_DEPENDENCIES = host-xorgproto
+ 
+ # needed for linking against libXfont
+ XAPP_BDFTOPCF_MAKE_OPTS += LIBS=-ldl
+diff --git a/package/x11r7/xserver_xorg-server/Config.in b/package/x11r7/xserver_xorg-server/Config.in
+index 89410f22..46196ce0 100644
+--- a/package/x11r7/xserver_xorg-server/Config.in
++++ b/package/x11r7/xserver_xorg-server/Config.in
+@@ -7,7 +7,6 @@ config BR2_PACKAGE_XSERVER_XORG_SERVER
+ 	select BR2_PACKAGE_LIBSHA1 if (!BR2_PACKAGE_OPENSSL && !BR2_PACKAGE_LIBGCRYPT)
+ 	select BR2_PACKAGE_MCOOKIE
+ 	select BR2_PACKAGE_PIXMAN
+-	select BR2_PACKAGE_XFONT_FONT_ALIAS
+ 	select BR2_PACKAGE_XFONT_FONT_MISC_MISC
+ 	select BR2_PACKAGE_XFONT_FONT_CURSOR_MISC
+ 	select BR2_PACKAGE_XLIB_LIBX11

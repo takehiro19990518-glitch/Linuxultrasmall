@@ -1,0 +1,10 @@
+--- a/package/x11r7/xkeyboard-config/xkeyboard-config.mk	2026-09-30 00:45:55.025376079 +0000
++++ b/package/x11r7/xkeyboard-config/xkeyboard-config.mk	2026-09-30 00:45:55.029376079 +0000
+@@ -12,7 +12,6 @@
+ 
+ XKEYBOARD_CONFIG_DEPENDENCIES = \
+ 	$(BR2_PYTHON3_HOST_DEPENDENCY) \
+-	host-gettext \
+ 	host-xapp_xkbcomp
+ 
+ # xkeyboard-config.pc

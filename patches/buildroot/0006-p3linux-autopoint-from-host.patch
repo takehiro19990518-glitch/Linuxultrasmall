@@ -1,0 +1,14 @@
+--- a/package/pkg-autotools.mk	2026-10-12 11:25:06.262225238 +0000
++++ b/package/pkg-autotools.mk	2026-10-12 11:25:06.275711143 +0000
+@@ -231,8 +231,9 @@
+ 
+ # autopoint is provided by gettext
+ ifeq ($$($(2)_AUTOPOINT),YES)
+-$(2)_DEPENDENCIES += host-gettext
+-$(2)_AUTORECONF_ENV += AUTOPOINT=$$(HOST_DIR)/bin/autopoint
++# P3LINUX: use the build host's autopoint (host-gettext-tiny's sources are
++# not obtainable in the P3 Linux build environment; see BUILD.md)
++$(2)_AUTORECONF_ENV += AUTOPOINT=autopoint
+ else
+ $(2)_AUTORECONF_ENV += AUTOPOINT=/bin/true
+ endif

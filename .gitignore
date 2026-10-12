@@ -1,5 +1,5 @@
-buildroot/
-output/
-dl/
+/buildroot/
+/output/
+/dl/
 *.pyc
 __pycache__/
