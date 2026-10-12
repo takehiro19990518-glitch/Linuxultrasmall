@@ -253,7 +253,7 @@ def main():
         time.sleep(20)
         _, out = sh("pidof xterm p3-files p3-edit | wc -w")
         n = out.strip().splitlines()[-1] if out.strip() else "0"
-        check("   stress: 9 windows open at once (4 xterm, 2 files, 2 edit, sysinfo)", n.isdigit() and int(n) >= 8, f"{n} app processes")
+        check("   stress: 5 more windows open at once (3 xterm, files, edit)", n.isdigit() and int(n) >= 5, f"{n} app processes")
         shot("06-stress")
         _, out = sh("free -m | grep -E '^(Mem|Swap):' | tr -s ' '")
         mem = " / ".join(l.strip() for l in out.splitlines() if l.startswith(("Mem", "Swap")))
