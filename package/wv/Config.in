@@ -1,0 +1,4 @@
+config BR2_PACKAGE_WV
+	bool "wv"
+	select BR2_PACKAGE_LIBGSF
+	select BR2_PACKAGE_LIBPNG

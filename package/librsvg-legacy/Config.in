@@ -1,0 +1,11 @@
+config BR2_PACKAGE_LIBRSVG_LEGACY
+	bool "librsvg-legacy"
+	help
+	  librsvg 2.40 (the last version written in C, no Rust needed)
+	select BR2_PACKAGE_CAIRO
+	select BR2_PACKAGE_CAIRO_PNG
+	select BR2_PACKAGE_GDK_PIXBUF
+	select BR2_PACKAGE_LIBCROCO3
+	select BR2_PACKAGE_LIBGLIB2
+	select BR2_PACKAGE_LIBXML2
+	select BR2_PACKAGE_PANGO

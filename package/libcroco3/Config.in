@@ -1,0 +1,4 @@
+config BR2_PACKAGE_LIBCROCO3
+	bool "libcroco3"
+	select BR2_PACKAGE_LIBGLIB2
+	select BR2_PACKAGE_LIBXML2

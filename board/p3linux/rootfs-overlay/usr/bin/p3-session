@@ -6,6 +6,8 @@ if [ ! -d "$HOME/.fluxbox" ]; then
   cp -a /etc/p3linux/fluxbox/. "$HOME/.fluxbox/"
 fi
 export XENVIRONMENT=/etc/p3linux/Xresources
+# GTK3 apps: no accessibility bus (saves memory and startup time)
+export NO_AT_BRIDGE=1
 p3-start &
 [ -e "$HOME/.p3-no-welcome" ] || p3-sysinfo &
 ( sleep 3; echo "P3LINUX: DESKTOP READY" > /dev/console ) &

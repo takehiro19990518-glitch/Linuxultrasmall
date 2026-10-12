@@ -222,8 +222,17 @@ def _sox_fixup(root):
     open(p, "w").write(t.replace("#error FIX NEEDED HERE", "/* P3LINUX: musl, no pipe rewind */"))
 
 
+def _boost_fixup(root):
+    # Debian drops the bison-generated parser of the b2 build engine;
+    # regenerate it with the host bison (as upstream's release script does).
+    eng = os.path.join(root, "tools", "build", "src", "engine")
+    if not os.path.exists(os.path.join(eng, "jamgram.cpp")):
+        subprocess.check_call(["bison", "-y", "-d", "-o", "jamgram.cpp", "jamgram.y"], cwd=eng)
+
+
 # per-package fixups for Debian-modified (dfsg) or legacy source trees
-FIXUPS = {"gmp": _gmp_fixup, "gawk": _gawk_fixup, "mupdf": _mupdf_fixup, "sox": _sox_fixup}
+FIXUPS = {"gmp": _gmp_fixup, "gawk": _gawk_fixup, "mupdf": _mupdf_fixup, "sox": _sox_fixup,
+          "boost": _boost_fixup}
 for _d in ("mach64", "savage", "trident", "neomagic", "tdfx", "siliconmotion", "mga", "r128", "cirrus"):
     FIXUPS["xdriver_xf86-video-" + _d] = _xdriver_fixup
 

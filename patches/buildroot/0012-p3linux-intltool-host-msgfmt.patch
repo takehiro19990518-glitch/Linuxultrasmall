@@ -1,0 +1,13 @@
+diff --git a/package/intltool/intltool.mk b/package/intltool/intltool.mk
+index 85955444..992ab9d8 100644
+--- a/package/intltool/intltool.mk
++++ b/package/intltool/intltool.mk
+@@ -9,6 +9,7 @@ INTLTOOL_SITE = https://launchpad.net/intltool/trunk/$(INTLTOOL_VERSION)/+downlo
+ INTLTOOL_LICENSE = GPL-2.0+
+ INTLTOOL_LICENSE_FILES = COPYING
+ 
+-HOST_INTLTOOL_DEPENDENCIES = host-gettext host-libxml-parser-perl
++# P3LINUX: msgfmt comes from the build host (host-gettext sources unavailable)
++HOST_INTLTOOL_DEPENDENCIES = host-libxml-parser-perl
+ 
+ $(eval $(host-autotools-package))

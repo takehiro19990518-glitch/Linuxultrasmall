@@ -5,6 +5,14 @@ f="$1"
 if [ -d "$f" ]; then exec p3-files "$f"; fi
 lc=$(echo "$f" | tr 'A-Z' 'a-z')
 view() { exec xterm -T "$(basename "$f")" -e sh -c "$1 | less"; }
+# AbiWord / Gnumeric (GTK3) need about 128MB; smaller PCs get the light viewers
+mem=$(awk '/^MemTotal/ {print int($2/1024)}' /proc/meminfo)
+if [ "${mem:-0}" -ge 110 ] && command -v abiword >/dev/null; then
+  case "$lc" in
+    *.doc|*.docx|*.rtf|*.odt|*.abw|*.wri) exec abiword "$f";;
+    *.xls|*.xlsx|*.ods|*.csv|*.gnumeric) exec gnumeric "$f";;
+  esac
+fi
 case "$lc" in
   *.pdf|*.xps|*.epub|*.cbz) exec mupdf-x11 "$f";;
   *.jpg|*.jpeg|*.png|*.gif|*.bmp|*.tif|*.tiff|*.pnm|*.ppm|*.xpm) exec feh -. -g 640x480 "$f";;

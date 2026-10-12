@@ -2,11 +2,13 @@
 acl pool/main/a/acl/acl_2.3.2.orig.tar.xz 97203a72cae99ab89a067fe2210c1cbf052bc492b479eca7d226d9830883b0bd 2.3.2 -
 alsa-lib pool/main/a/alsa-lib/alsa-lib_1.2.15.3.orig.tar.bz2 7b079d614d582cade7ab8db2364e65271d0877a37df8757ac4ac0c8970be861e 1.2.15.3 -
 alsa-utils pool/main/a/alsa-utils/alsa-utils_1.2.15.2.orig.tar.bz2 7aaaafbfb01942113ec0c31e51f705910e81079205088ca2f8f137a3869e1a3a 1.2.15.2 -
+at-spi2-core pool/main/a/at-spi2-core/at-spi2-core_2.60.0.orig.tar.xz 80e50c1a97d8fd660a3fadb02ca35876df881c266d3d6108fc5b4c113614cb99 2.60.0 -
 attr pool/main/a/attr/attr_2.5.2.orig.tar.xz f2e97b0ab7ce293681ab701915766190d607a1dba7fae8a718138150b700a70b 2.5.2 -
 autoconf pool/main/a/autoconf/autoconf_2.72.orig.tar.xz ba885c1319578d6c94d46e9b0dceb4014caafe2490e437a0dbca3f270a223f5a 2.72 0001-dont-add-dirty-to-version.patch
 bc pool/main/b/bc/bc_1.07.1.orig.tar.gz 62adfca89b0a1c0164c2cdca59ca210c1d44c3ffc46daf9931cf4942664cb02a 1.07.1 0002-notice-read-and-write-errors-on-input-and-output.patch
 binutils pool/main/b/binutils/binutils_2.44.orig.tar.xz ce2017e059d63e67ddb9240e9d4ec49c2893605035cd60e92ad53177f4377237 2.44 -
 bison pool/main/b/bison/bison_3.8.2+dfsg.orig.tar.xz dff8a3c96dd34121828f62a7fa49e1f7765815b89e59f564e8d2a9e71c177be5 3.8.2 -
+boost pool/main/b/boost1.83/boost1.83_1.83.0.orig.tar.xz 404df4b4072fc7f2d4483d4fc2d61ff6f554dd80c9a812652684d5952e881c91 1.83.0 0001-unordered-fix-copy-assign.patch
 busybox pool/main/b/busybox/busybox_1.37.0.orig.tar.bz2 3311dff32e746499f4df0d5df04d7eb396382d7e108bb9250e7b519b837043a4 1.37.0 -
 bzip2 pool/main/b/bzip2/bzip2_1.0.8.orig.tar.gz ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269 1.0.8 -
 cifs-utils pool/main/c/cifs-utils/cifs-utils_7.4.orig.tar.bz2 53353d05c30b4fc9dac006a8f0c5054cdd8a1834c176313c91e4694025c4b891 7.4 -
@@ -19,6 +21,7 @@ fltk pool/universe/f/fltk1.3/fltk1.3_1.3.8.orig.tar.gz f3c1102b07eb0e7a50538f9fc
 fontconfig pool/main/f/fontconfig/fontconfig_2.17.1.orig.tar.gz f07504cef87f171ee1748352e2df9b9f125352f620fa0d03a9284306ea2c40a4 2.17.1 -
 freetype pool/main/f/freetype/freetype_2.14.2+dfsg.orig.tar.xz 9a2bdc2c992fa82a309eccf5e8bcbf2a380a98ba22f9f2ec7e56767739a19a0a 2.14.2 -
 gcc pool/main/g/gcc-15/gcc-15_15.2.0.orig.tar.gz 3063dafdeed9fb9565f099b2560379bce08dae2b461ed4e30dd8d999f5f5747c 15.2.0 -
+gdk-pixbuf pool/main/g/gdk-pixbuf/gdk-pixbuf_2.42.12+dfsg.orig.tar.xz 2fab7a828f1a017a235cd800cf0b47d83733037bade493337c46ed79e7ef3678 2.42.12 -
 gmp pool/main/g/gmp/gmp_6.3.0+dfsg.orig.tar.xz bd2966e6d277f79328e894a5a9f3ba3fbf2ed2be81def5f48623e30c23fb1572 6.3.0 -
 gnuchess pool/universe/g/gnuchess/gnuchess_6.2.9.orig.tar.gz ddfcc20bdd756900a9ab6c42c7daf90a2893bf7f19ce347420ce36baebc41890 6.2.9 -
 gumbo-parser pool/universe/g/gumbo-parser/gumbo-parser_0.13.0+dfsg.orig.tar.xz 1d01316617df9cefcd3f43235b519f606a5465a526a768734714fcc51ccb79e4 0.13.0 -
@@ -27,10 +30,13 @@ less pool/main/l/less/less_668.orig.tar.gz 2819f55564d86d542abbecafd82ff61e819a3
 libcap pool/main/libc/libcap2/libcap2_2.75.orig.tar.xz de4e7e064c9ba451d5234dd46e897d7c71c96a9ebf9a0c445bc04f4742d83632 2.75 -
 libcurl pool/main/c/curl/curl_8.18.0.orig.tar.gz e9274a5f8ab5271c0e0e6762d2fce194d5f98acc568e4ce816845b2dcc0cf88f 8.18.0 -
 libdrm pool/main/libd/libdrm/libdrm_2.4.131.orig.tar.xz 45ba9983b51c896406a3d654de81d313b953b76e6391e2797073d543c5f617d5 2.4.131 -
+libepoxy pool/main/libe/libepoxy/libepoxy_1.5.10.orig.tar.gz a7ced37f4102b745ac86d6a70a9da399cc139ff168ba6b8002b4d8d43c900c15 1.5.10 -
 libevdev pool/main/libe/libevdev/libevdev_1.13.6+dfsg.orig.tar.xz 6643222f13cfbead0e30b8b74600f6d335f6ebb1ad8cbaf85783e36886689071 1.13.6 -
 libgcrypt pool/main/libg/libgcrypt20/libgcrypt20_1.12.0.orig.tar.bz2 0311454e678189bad62a7e9402a9dd793025efff6e7449898616e2fc75e0f4f5 1.12.0 -
 libglib2 pool/main/g/glib2.0/glib2.0_2.88.0.orig.tar.xz 3546251ccbb3744d4bc4eb48354540e1f6200846572bab68e3a2b7b2b64dfd07 2.88.0 -
 libgpg-error pool/main/libg/libgpg-error/libgpg-error_1.58.orig.tar.bz2 f943aea9a830a8bd938e5124b579efaece24a3225ff4c3d27611a80ce1260c27 1.58 -
+libgtk3 pool/main/g/gtk+3.0/gtk+3.0_3.24.52.orig.tar.xz 80931fa472a77b9a164f6740e3c0b444fac6770054632d35a7ff9d679e5e7b9f 3.24.52 -
+libjpeg pool/universe/libj/libjpeg9/libjpeg9_9f.orig.tar.gz 04705c110cb2469caa79fb71fba3d7bf834914706e9641a4589485c1f832565b 9f -
 libpciaccess pool/main/libp/libpciaccess/libpciaccess_0.18.1.orig.tar.gz f31889dfb54c1b0ba114ce0eebc360bdbe14392b209ca94cb019c2bb736a6b9a 0.18.1 -
 libpthread-stubs pool/universe/libp/libpthread-stubs/libpthread-stubs_0.5.orig.tar.gz 593196cc746173d1e25cb54a93a87fd749952df68699aab7e02c085530e87747 0.5 -
 libtalloc pool/main/t/talloc/talloc_2.4.2.orig.tar.gz 85ecf9e465e20f98f9950a52e9a411e14320bc555fa257d87697b7e7a9b1d8a6 2.4.2 -
@@ -49,6 +55,7 @@ ncdu pool/universe/n/ncdu/ncdu_1.22.orig.tar.gz 8af3431c09769f2a6e75f2260707d517
 ncurses pool/main/n/ncurses/ncurses_6.6+20251231.orig.tar.gz e280541f4f601b8586bec305976c873fd641607f9bc4254bf661034dcccac4e9 6.6-20251231 -
 openjpeg pool/main/o/openjpeg2/openjpeg2_2.5.4.orig.tar.xz 6f6cf917e9587bc2df83aee5b51aa22dd56111640b3bad290b93443b6a4682b7 2.5.4 -
 p7zip pool/universe/p/p7zip/p7zip_16.02+dfsg.orig.tar.xz 50adee7a4259e3492d8b68dfd12bda0ed27e615193a16f10af296f23dc831b14 16.02 -
+pango pool/main/p/pango1.0/pango1.0_1.57.0.orig.tar.xz 890640c841dae77d3ae3d8fe8953784b930fa241b17423e6120c7bfdf8b891e7 1.57.0 -
 pciutils pool/main/p/pciutils/pciutils_3.14.0.orig.tar.gz e31c79722dbbe9d2906b92996ce295268e54d4342fefe3ff476caa613e51be2a 3.14.0 -
 pixman pool/main/p/pixman/pixman_0.46.4.orig.tar.gz d09c44ebc3bd5bee7021c79f922fe8fb2fb57f7320f55e97ff9914d2346a591c 0.46.4 -
 pkgconf pool/main/p/pkgconf/pkgconf_2.5.1.orig.tar.xz cd05c9589b9f86ecf044c10a2269822bc9eb001eced2582cfffd658b0a50c243 2.5.1 -
@@ -113,6 +120,7 @@ xlib_libXrandr pool/main/libx/libxrandr/libxrandr_1.5.4.orig.tar.gz c72c94dc3373
 xlib_libXrender pool/main/libx/libxrender/libxrender_0.9.12.orig.tar.gz 0fff64125819c02d1102b6236f3d7d861a07b5216d8eea336c3811d31494ecf7 0.9.12 -
 xlib_libXres pool/main/libx/libxres/libxres_1.2.1.orig.tar.gz 918fb33c3897b389a1fbb51571c5c04c6b297058df286d8b48faa5af85e88bcc 1.2.1 -
 xlib_libXt pool/main/libx/libxt/libxt_1.2.1.orig.tar.gz 6da1bfa9dd0ed87430a5ce95b129485086394df308998ebe34d98e378e3dfb33 1.2.1 -
+xlib_libXtst pool/main/libx/libxtst/libxtst_1.2.5.orig.tar.gz 244ba6e1c5ffa44f1ba251affdfa984d55d99c94bb925a342657e5e7aaf6d39c 1.2.5 -
 xlib_libXxf86vm pool/main/libx/libxxf86vm/libxxf86vm_1.1.4.orig.tar.gz 5108553c378a25688dcb57dca383664c36e293d60b1505815f67980ba9318a99 1.1.4 -
 xlib_libfontenc pool/main/libf/libfontenc/libfontenc_1.1.8.orig.tar.gz b55039f70959a1b2f02f4ec8db071e5170528d2c9180b30575dccf7510d7fb9f 1.1.8 -
 xlib_libxkbfile pool/main/libx/libxkbfile/libxkbfile_1.1.0.orig.tar.gz 2a92adda3992aa7cbad758ef0b8dfeaedebb49338b772c64ddf369d78c1c51d3 1.1.0 -

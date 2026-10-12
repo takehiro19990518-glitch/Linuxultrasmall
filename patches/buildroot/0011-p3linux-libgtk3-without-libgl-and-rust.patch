@@ -1,0 +1,57 @@
+diff --git a/package/libepoxy/libepoxy.mk b/package/libepoxy/libepoxy.mk
+index 16304288..e71f63f7 100644
+--- a/package/libepoxy/libepoxy.mk
++++ b/package/libepoxy/libepoxy.mk
+@@ -24,6 +24,10 @@ endif
+ ifeq ($(BR2_PACKAGE_HAS_LIBGL)$(BR2_PACKAGE_XLIB_LIBX11),yy)
+ LIBEPOXY_CONF_OPTS += -Dglx=yes -Dx11=true
+ LIBEPOXY_DEPENDENCIES += libgl xlib_libX11
++else ifeq ($(BR2_PACKAGE_XLIB_LIBX11),y)
++# GLX dispatch without a build-time libGL (libGL is dlopen()ed at runtime)
++LIBEPOXY_CONF_OPTS += -Dglx=yes -Dx11=true
++LIBEPOXY_DEPENDENCIES += xlib_libX11
+ else
+ LIBEPOXY_CONF_OPTS += -Dglx=no -Dx11=false
+ endif
+diff --git a/package/libgtk3/Config.in b/package/libgtk3/Config.in
+index 52ee50db..519b9073 100644
+--- a/package/libgtk3/Config.in
++++ b/package/libgtk3/Config.in
+@@ -14,15 +14,12 @@ comment "libgtk3 needs an OpenGL or an OpenGL-EGL backend"
+ 
+ config BR2_PACKAGE_LIBGTK3
+ 	bool "libgtk3"
+-	depends on BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS # host-libgtk3 -> host-librsvg
+ 	depends on BR2_USE_WCHAR # glib2
+ 	depends on BR2_TOOLCHAIN_HAS_THREADS # glib2
+ 	depends on BR2_USE_MMU # glib2
+ 	depends on BR2_INSTALL_LIBSTDCPP # pango
+ 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # pango -> harfbuzz
+ 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # pango -> harfbuzz
+-	depends on BR2_PACKAGE_HAS_LIBEGL || \
+-		BR2_PACKAGE_HAS_LIBGL
+ 	select BR2_PACKAGE_AT_SPI2_CORE
+ 	select BR2_PACKAGE_CAIRO
+ 	select BR2_PACKAGE_CAIRO_PNG
+@@ -83,7 +80,6 @@ config BR2_PACKAGE_LIBGTK3_X11
+ 	bool "X11 GDK backend"
+ 	default y
+ 	depends on BR2_PACKAGE_XORG7
+-	depends on BR2_PACKAGE_HAS_LIBGL
+ 	select BR2_PACKAGE_FONTCONFIG
+ 	select BR2_PACKAGE_XLIB_LIBX11
+ 	select BR2_PACKAGE_XLIB_LIBXEXT
+diff --git a/package/libgtk3/libgtk3.mk b/package/libgtk3/libgtk3.mk
+index cbe49b87..e02c7e49 100644
+--- a/package/libgtk3/libgtk3.mk
++++ b/package/libgtk3/libgtk3.mk
+@@ -105,8 +105,7 @@ HOST_LIBGTK3_DEPENDENCIES = \
+ 	host-libglib2 \
+ 	host-libpng \
+ 	host-gdk-pixbuf \
+-	host-pkgconf \
+-	host-librsvg
++	host-pkgconf
+ 
+ HOST_LIBGTK3_CFLAGS = \
+ 	`$(HOST_MAKE_ENV) $(PKG_CONFIG_HOST_BINARY) --cflags --libs gdk-pixbuf-2.0` \

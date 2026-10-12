@@ -11,7 +11,9 @@
     [exec] (FTP) {xterm -T FTP -e lftp}
   [end]
   [submenu] (Office)
-    [exec] (Spreadsheet - sc-im) {xterm -T Spreadsheet -e sc-im}
+    [exec] (Word Processor - AbiWord, 128MB+) {p3-needram 128 abiword}
+    [exec] (Spreadsheet - Gnumeric, 128MB+) {p3-needram 128 gnumeric}
+    [exec] (Spreadsheet - sc-im, light) {xterm -T Spreadsheet -e sc-im}
     [exec] (Text Editor) {p3-edit}
     [exec] (Open Word/Excel/PDF...) {p3-openfile}
     [exec] (Calculator) {xcalc}
