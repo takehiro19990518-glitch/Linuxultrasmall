@@ -57,6 +57,8 @@ python3 pool/main/p/python3.14/python3.14_3.14.4.orig.tar.xz d923c51303e38e24913
 rsync pool/main/r/rsync/rsync_3.4.1+ds1.orig.tar.xz bb9e2dda7e79d9639bc04bdafff6bb0b06a606ed915358b574696384215c9e5c 3.4.1 -
 sdl pool/main/libs/libsdl1.2/libsdl1.2_1.2.15+dfsg2.orig.tar.gz ec4d5ea4714b92f840aafcf8c759cf7914827f632e19f42b18ba6f6489f0f5e9 1.2.15 -
 sdl2 pool/main/libs/libsdl2/libsdl2_2.32.10+dfsg.orig.tar.gz 31bac5add36f98b55e3fcf4456f0dab50a06cf06bbcde283be567f64b05b95f3 2.32.10 -
+sdl2_mixer pool/universe/libs/libsdl2-mixer/libsdl2-mixer_2.8.0+dfsg.orig.tar.gz 3832013fd7e43473fb5e21016cee50036162d5e72323f33537109a0e0b1fd3ba 2.8.0 -
+sdl2_net pool/universe/libs/libsdl2-net/libsdl2-net_2.2.0+dfsg.orig.tar.xz b2e3313dd6496041c85af3b2ce1c69c6627e2a7d5111101a9c86c5cfb38a8f61 2.2.0 -
 sdl_mixer pool/universe/s/sdl-mixer1.2/sdl-mixer1.2_1.2.12.orig.tar.gz 1644308279a975799049e4826af2cfc787cad2abb11aa14562e402521f86992a 1.2.12 0001-Add-Libs.private-field-to-pkg-config-file.patch,0002-configure__set_macro_directory.patch,0003-configure.ac-fix-static-linking-with-tremor.patch
 sdl_net pool/universe/s/sdl-net1.2/sdl-net1.2_1.2.8.orig.tar.gz 5f4a7a8bb884f793c278ac3f3713be41980c5eedccecff0260411347714facb4 1.2.8 -
 sox pool/universe/s/sox/sox_14.4.2+git20190427.orig.tar.bz2 81a6956d4330e75b5827316e44ae381e6f1e8928003c6aa45896da9041ea149c 14.4.2 0001-Make-SoX-support-uclibc-based-toolchains.patch,0002-configure.ac-put-back-disable-stack-protector.patch,0003-configure.ac-fix-static-linking-with-id3tag.patch,0004-configure.ac-fix-static-linking-with-magic.patch,0005-configure.ac-fix-static-linking-with-sndfile.patch,0006-voc-word-width-should-never-be-0-to-avoid-division-b.patch

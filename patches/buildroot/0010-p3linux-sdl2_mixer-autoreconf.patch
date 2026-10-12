@@ -1,0 +1,11 @@
+--- a/package/sdl2_mixer/sdl2_mixer.mk	2026-10-12 12:58:38.058558820 +0000
++++ b/package/sdl2_mixer/sdl2_mixer.mk	2026-10-12 12:58:38.076156934 +0000
+@@ -49,4 +49,8 @@
+ SDL2_MIXER_CONF_OPTS += --disable-music-ogg-tremor
+ endif
+ 
++# P3LINUX: the Ubuntu archive source has no generated configure script
++SDL2_MIXER_AUTORECONF = YES
++SDL2_MIXER_AUTORECONF_OPTS = -I acinclude
++
+ $(eval $(autotools-package))
