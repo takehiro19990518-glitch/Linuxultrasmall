@@ -32,13 +32,18 @@ _start:
     hlt
     jmp .hang
 
-; Kernel stack (16 KB) in .bss.  There is no guard page (paging is off), so
-; a canary at the bottom is checked periodically by the kernel instead.
+; Kernel stack (16 KB) in .bss, page aligned, preceded by a guard page.
+; Once paging is on (kernel/mm/paging.c) the guard page is left unmapped, so
+; a stack overflow faults (#PF -> #DF task gate) instead of silently
+; corrupting other kernel data.
 KERNEL_STACK_SIZE equ 16384
-section .bss
-align 16
+PAGE_SIZE         equ 4096
+section .bss nobits alloc noexec write align=4096
+global kernel_stack_guard
 global kernel_stack_bottom
 global kernel_stack_top
+kernel_stack_guard:
+    resb PAGE_SIZE
 kernel_stack_bottom:
     resb KERNEL_STACK_SIZE
 kernel_stack_top:

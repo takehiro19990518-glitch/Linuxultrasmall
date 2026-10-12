@@ -87,7 +87,12 @@ void gdt_init(void)
         "ltr %%ax"                      /* current task = tss_main */
         :: "m"(p), "i"(KERNEL_CS), "i"(KERNEL_DS), "i"(TSS_MAIN_SEL)
         : "eax", "memory");
-    /* The CR3 field is only used on a task switch; paging is off, but keep
-     * it valid anyway. */
     __asm__ volatile("mov %%cr3, %0" : "=r"(tss_df.cr3));
+}
+
+/* The #DF task switch loads CR3 from tss_df, so it must be updated once
+ * paging is enabled (otherwise the switch would use page directory 0). */
+void gdt_set_df_cr3(u32 cr3)
+{
+    tss_df.cr3 = cr3;
 }

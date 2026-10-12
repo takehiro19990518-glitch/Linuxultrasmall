@@ -4,12 +4,16 @@
 #include <panic.h>
 #include <klog.h>
 #include <string.h>
+#include <mm.h>
 
 #define IDT_ENTRIES         256
 #define EXC_COUNT           32
 #define VEC_DOUBLE_FAULT    8
 #define VEC_NMI             2
 #define VEC_BREAKPOINT      3
+#define VEC_PAGE_FAULT      14
+#define PF_PRESENT          0x1
+#define PF_WRITE            0x2
 #define GATE_INT32          0x8E    /* present, ring 0, 32-bit interrupt gate */
 #define GATE_TASK           0x85    /* present, ring 0, task gate */
 #define SYS_CTRL_B          0x61    /* NMI source bits 6 (IOCHK) / 7 (parity) */
@@ -121,6 +125,15 @@ void interrupt_dispatch(struct int_frame *f)
         panic_frame(f, "NMI: %s", (b & 0x80) ? "memory parity error" :
                     (b & 0x40) ? "I/O channel check" : "unknown source");
     }
+    if (f->int_no == VEC_PAGE_FAULT) {
+        u32 addr = read_cr2();
+        const char *why = addr < PAGE_SIZE ? "NULL pointer dereference" :
+                          paging_is_guard(addr) ? "guard page hit (stack overflow?)" :
+                          !paging_is_mapped(addr) ? "address not mapped (beyond RAM?)" :
+                          "protection violation";
+        panic_frame(f, "page fault: %s %08x - %s", (f->err_code & PF_WRITE) ? "write to" :
+                    "read from", addr, why);
+    }
     panic_frame(f, "unhandled CPU exception");
 }
 
@@ -143,9 +156,11 @@ void double_fault_task(void)
     f.esi = t->esi; f.edi = t->edi; f.ebp = t->ebp; f.esp_pusha = t->esp;
     f.eip = t->eip; f.cs = t->cs; f.eflags = t->eflags;
     f.ds = t->ds; f.es = t->es; f.fs = t->fs; f.gs = t->gs;
-    bool overflow = t->esp < (u32)kernel_stack_bottom + 256 &&
-                    t->esp >= (u32)kernel_stack_bottom - 4096;
-    panic_frame(&f, "double fault%s", overflow ? " (kernel stack overflow)" : "");
+    /* A fault while pushing onto the guard page below the stack means the
+     * kernel stack overflowed. */
+    bool overflow = paging_is_guard(read_cr2()) || paging_is_guard(t->esp) ||
+                    paging_is_guard(t->esp - 4);
+    panic_frame(&f, "double fault%s", overflow ? ": KERNEL STACK OVERFLOW (guard page hit)" : "");
 }
 
 /* ---- kernel stack canary ------------------------------------------------- */

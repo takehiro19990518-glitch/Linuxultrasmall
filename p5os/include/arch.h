@@ -25,6 +25,7 @@ struct int_frame {
 typedef void (*irq_handler_t)(struct int_frame *f);
 
 void gdt_init(void);
+void gdt_set_df_cr3(u32 cr3);
 void idt_init(void);
 void irq_register(u32 irq, irq_handler_t h);
 u32 irq_count(u32 irq);

@@ -84,11 +84,22 @@ static int cmd_cpu(int argc, char **argv, const char *rest)
     return 0;
 }
 
+/* Real (non-tail) recursion that eats 512 bytes of stack per level. */
+static volatile u32 recurse_limit = 0xFFFFFFFFu;   /* never reached */
+static u32 __attribute__((noinline)) recurse_forever(u32 depth)
+{
+    volatile u8 pad[512];
+    if (depth == recurse_limit)
+        return 0;
+    pad[depth & 511] = (u8)depth;
+    return recurse_forever(depth + 1) + pad[(depth + 1) & 511];
+}
+
 /* Deliberately fault, to test the exception/panic path. */
 static int cmd_crash(int argc, char **argv, const char *rest)
 {
     if (argc < 2) {
-        kprintf("usage: crash div0|gpf|ud|stack|panic   (halts the system!)\n");
+        kprintf("usage: crash div0|gpf|ud|null|stack|panic   (halts the system!)\n");
         return 1;
     }
     if (!strcmp(argv[1], "div0")) {
@@ -99,12 +110,11 @@ static int cmd_crash(int argc, char **argv, const char *rest)
         __asm__ volatile("mov %0, %%ds" :: "r"(0x1234));
     } else if (!strcmp(argv[1], "ud")) {
         __asm__ volatile(".byte 0xFF, 0xFF");      /* FF /7: undefined on all x86 */
+    } else if (!strcmp(argv[1], "null")) {
+        volatile u32 *np = NULL;
+        kprintf("%u\n", *np);
     } else if (!strcmp(argv[1], "stack")) {
-        /* recurse until the stack runs out */
-        static int (*volatile self)(int, char **, const char *) = cmd_crash;
-        volatile char pad[512];
-        pad[0] = 0;
-        self(argc, argv, rest + pad[0]);
+        kprintf("%u\n", recurse_forever(0));
     } else if (!strcmp(argv[1], "panic")) {
         panic("test panic requested from shell");
     }

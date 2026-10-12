@@ -12,6 +12,7 @@
 #include <shell.h>
 #include <system.h>
 #include <io.h>
+#include <mm.h>
 
 void kmain(u32 magic, const struct bootinfo *bi);
 
@@ -21,6 +22,7 @@ static void banner(void)
     kprintf("\n%s %s\n", P5OS_NAME, P5OS_VERSION);
     console_set_attr(ATTR_NORMAL);
     kprintf("CPU: %s\n", cpu_description());
+    kprintf("Memory: %u MB (%llu KB usable)\n", mem_installed_mb(), mem_usable_bytes() >> 10);
     kprintf("Type 'help' for commands.\n\n");
 }
 
@@ -39,13 +41,20 @@ void kmain(u32 magic, const struct bootinfo *bi)
              bi->boot_drive, bi->kernel_sectors, bi->kernel_lba,
              serial ? "COM1" : "absent");
 
+    memmap_init(bi);                    /* copy boot data before page 0 is unmapped */
     gdt_init();
     idt_init();
     pic_init();
     stack_guard_init();
+    LOG_INFO("cpu: GDT/IDT loaded, PIC remapped");
+
+    pmm_init();
+    paging_init();
+    heap_init();
+
     timer_init();
     sti();
-    LOG_INFO("cpu: GDT/IDT loaded, PIC remapped, PIT at %u Hz", TIMER_HZ);
+    LOG_INFO("timer: PIT channel 0 at %u Hz", TIMER_HZ);
 
     cpu_detect();
     LOG_INFO("cpu: %s", cpu_description());
