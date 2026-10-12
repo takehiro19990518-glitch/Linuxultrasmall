@@ -1,0 +1,4 @@
+config BR2_PACKAGE_SC_IM
+	bool "sc-im"
+	select BR2_PACKAGE_NCURSES
+	select BR2_PACKAGE_NCURSES_WCHAR

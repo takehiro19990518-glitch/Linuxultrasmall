@@ -163,3 +163,7 @@ sox              sox
 libsndfile       libsndfile
 libmad           libmad
 libid3tag        libid3tag
+sdl2             libsdl2
+sdl2_mixer       libsdl2-mixer
+sdl2_net         libsdl2-net
+chocolate-doom   chocolate-doom

@@ -1,0 +1,5 @@
+config BR2_PACKAGE_XBILL
+	bool "xbill"
+	depends on BR2_PACKAGE_XORG7
+	select BR2_PACKAGE_XLIB_LIBXAW
+	select BR2_PACKAGE_XLIB_LIBXPM
