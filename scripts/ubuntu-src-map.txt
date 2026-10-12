@@ -104,7 +104,6 @@ xdriver_xf86-video-siliconmotion xserver-xorg-video-siliconmotion
 xdriver_xf86-video-tdfx         xserver-xorg-video-tdfx
 xdriver_xf86-video-mach64       xserver-xorg-video-mach64
 # applications (phase 2a)
-bc               bc
 bzip2            bzip2
 ca-certificates  ca-certificates
 cdrkit           cdrkit
