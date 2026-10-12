@@ -163,9 +163,7 @@ static void execute(char *line)
         console_set_attr(ATTR_NORMAL);
         return;
     }
-    int rc = c->fn(argc, argv, rest);
-    if (rc != 0)
-        LOG_DBG("shell: '%s' returned %d", argv[0], rc);
+    c->fn(argc, argv, rest);
 }
 
 void shell_run(void)

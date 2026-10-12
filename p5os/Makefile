@@ -21,6 +21,7 @@ CFLAGS  := -m32 -march=pentium -mtune=pentium -std=gnu11 -O2 -g \
            -ffreestanding -fno-builtin -nostdinc -nostdlib \
            -fno-pic -fno-pie -fno-stack-protector -fno-omit-frame-pointer \
            -fno-asynchronous-unwind-tables -fno-strict-aliasing \
+           -fno-delete-null-pointer-checks -fno-isolate-erroneous-paths-dereference \
            -mgeneral-regs-only -mno-red-zone \
            -Wall -Wextra -Wshadow -Wstrict-prototypes -Wmissing-prototypes \
            -Wno-unused-parameter -Iinclude
@@ -38,6 +39,8 @@ DEPS     := $(C_SRCS:%.c=$(BUILD)/%.d)
 FLOPPY_IMG := $(IMAGES)/p5os-floppy.img
 HDD_IMG    := $(IMAGES)/p5os-hdd.img
 DATA_IMG   := $(BUILD)/data.img
+
+.DELETE_ON_ERROR:
 
 .PHONY: all clean distclean images check-isa run run-hdd run-floppy run-isapc debug test data-disk size
 

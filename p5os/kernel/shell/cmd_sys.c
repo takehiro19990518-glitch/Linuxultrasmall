@@ -111,8 +111,8 @@ static int cmd_crash(int argc, char **argv, const char *rest)
     } else if (!strcmp(argv[1], "ud")) {
         __asm__ volatile(".byte 0xFF, 0xFF");      /* FF /7: undefined on all x86 */
     } else if (!strcmp(argv[1], "null")) {
-        volatile u32 *np = NULL;
-        kprintf("%u\n", *np);
+        volatile uintptr_t zero = 0;    /* opaque to the optimizer */
+        kprintf("%u\n", *(volatile u32 *)zero);
     } else if (!strcmp(argv[1], "stack")) {
         kprintf("%u\n", recurse_forever(0));
     } else if (!strcmp(argv[1], "panic")) {

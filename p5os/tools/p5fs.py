@@ -373,7 +373,7 @@ def main():
 
     if a.cmd == "mkfs":
         size = a.size_mb * 1024 * 1024
-        with open(a.image, "wb") as f:
+        with open(a.image, "w+b") as f:
             f.truncate(size)
             mkfs(f, 0, size // BLOCK, a.label)
         print(f"{a.image}: P5FS, {size // BLOCK} blocks")

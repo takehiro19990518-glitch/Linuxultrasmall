@@ -67,7 +67,10 @@ def main():
         print(f"{a.out}: floppy image, {boot_sectors} boot sectors used")
         return
 
-    total = a.size_mb * 1024 * 1024 // SECTOR
+    # whole cylinders of 16 heads x 63 sectors, so BIOSes and emulators that
+    # derive the geometry from the partition table get a sane answer
+    cyl = HDD_HEADS * HDD_SPT
+    total = a.size_mb * 1024 * 1024 // SECTOR // cyl * cyl
     if boot_sectors > PART_START:
         sys.exit("boot area overlaps the file system partition")
     psize = total - PART_START
@@ -93,7 +96,7 @@ def main():
         errs = fs.check()
         if errs:
             sys.exit("file system check failed: " + "; ".join(errs))
-    print(f"{a.out}: HDD image {a.size_mb} MB, {boot_sectors} boot sectors, "
+    print(f"{a.out}: HDD image {total * SECTOR // 1024} KB ({total // cyl} cylinders), {boot_sectors} boot sectors, "
           f"P5FS partition at LBA {PART_START} ({psize} blocks, {nfiles} files)")
 
 
