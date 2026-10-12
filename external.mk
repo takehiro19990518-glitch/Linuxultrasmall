@@ -1,7 +1,7 @@
 include $(sort $(wildcard $(BR2_EXTERNAL_P3LINUX_PATH)/package/*/*.mk))
 
 # X.Org video drivers built for P3 Linux (see configs/p3linux_defconfig)
-P3_XVIDEO = VESA FBDEV CIRRUS MACH64 MGA NEOMAGIC R128 SAVAGE SILICONMOTION TDFX TRIDENT
+P3_XVIDEO = VESA FBDEV CIRRUS MGA NEOMAGIC R128 SAVAGE SILICONMOTION TDFX
 
 # Some X.Org components come from older upstream releases (the versions
 # available in the Ubuntu archive, see scripts/ubuntu-sources.lock).  Those

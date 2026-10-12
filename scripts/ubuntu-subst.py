@@ -171,6 +171,8 @@ def _xdriver_fixup(root):
                 t = open(p, errors="surrogateescape").read()
                 t2 = re.sub(r"\.value\.bool\b", ".value.boolean", t)
                 t2 = re.sub(r"(\]|\))\.bool\b", r"\1.boolean", t2)
+                # xf86DisableRandR() was removed in xserver 1.20+ (no-op)
+                t2 = re.sub(r"\bxf86DisableRandR\s*\(\s*\)\s*;", ";", t2)
                 if t2 != t:
                     open(p, "w", errors="surrogateescape").write(t2)
 
