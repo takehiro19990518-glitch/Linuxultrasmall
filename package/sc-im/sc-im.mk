@@ -6,7 +6,7 @@ SC_IM_SOURCE = sc-im_$(SC_IM_VERSION).orig.tar.xz
 SC_IM_SITE = http://archive.ubuntu.com/ubuntu/pool/universe/s/sc-im
 SC_IM_LICENSE = BSD-4-Clause
 SC_IM_LICENSE_FILES = LICENSE
-SC_IM_DEPENDENCIES = ncurses host-pkgconf host-bison
+SC_IM_DEPENDENCIES = ncurses host-pkgconf
 define SC_IM_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/src CC="$(TARGET_CC)" prefix=/usr \
 		CFLAGS="$(TARGET_CFLAGS) -std=gnu17" PKG_CONFIG="$(PKG_CONFIG_HOST_BINARY)" YACC="bison -y"

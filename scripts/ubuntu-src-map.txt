@@ -85,7 +85,6 @@ xapp_xmodmap     x11-xserver-utils xmodmap
 alsa-lib         alsa-lib
 alsa-utils       alsa-utils
 cifs-utils       cifs-utils
-bison            bison
 iw               iw
 libnl            libnl3
 libtalloc        talloc

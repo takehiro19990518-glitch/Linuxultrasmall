@@ -1,0 +1,12 @@
+--- a/package/tmux/tmux.mk	2026-10-12 12:29:05.454453451 +0000
++++ b/package/tmux/tmux.mk	2026-10-12 12:29:05.458453451 +0000
+@@ -9,7 +9,8 @@
+ TMUX_LICENSE = ISC
+ TMUX_LICENSE_FILES = COPYING
+ TMUX_CPE_ID_VALID = YES
+-TMUX_DEPENDENCIES = host-bison libevent ncurses host-pkgconf
++# P3LINUX: build host bison (Ubuntu bison source lacks docs needed by host-bison)
++TMUX_DEPENDENCIES = libevent ncurses host-pkgconf
+ 
+ ifeq ($(BR2_PACKAGE_JEMALLOC),y)
+ TMUX_DEPENDENCIES += jemalloc
