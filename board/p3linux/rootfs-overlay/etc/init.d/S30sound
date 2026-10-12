@@ -5,6 +5,13 @@ case "$1" in
   start)
     # udev loads the drivers; give slow ISA/PCI cards a moment to register
     n=0; while [ ! -e /proc/asound/cards ] && [ $n -lt 10 ]; do sleep 0.5; n=$((n+1)); done
+    # Non-PnP ISA cards are not auto-detected: if no card was found, try the
+    # standard Sound Blaster 16 / Pro settings (port 0x220).  "p3.isasound=0"
+    # on the kernel command line disables this probe.
+    if ! grep -q '^ *[0-9]' /proc/asound/cards 2>/dev/null && ! grep -qw p3.isasound=0 /proc/cmdline; then
+      modprobe -q snd-sb16 isapnp=0 port=0x220 irq=5 dma8=1 dma16=5 2>/dev/null ||
+      modprobe -q snd-sb8 port=0x220 irq=5 dma8=1 2>/dev/null
+    fi
     grep -q '^ *[0-9]' /proc/asound/cards 2>/dev/null || exit 0
     if [ -f "$STATE" ]; then
       alsactl -f "$STATE" restore >/dev/null 2>&1

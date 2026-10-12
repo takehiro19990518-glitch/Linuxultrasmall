@@ -21,7 +21,7 @@ RAM = int(sys.argv[1]) if len(sys.argv) > 1 else 256
 MEDIUM = sys.argv[2] if len(sys.argv) > 2 else "iso"
 OUT = os.path.join(TOP, "output", "test")
 os.makedirs(OUT, exist_ok=True)
-TAG = f"{RAM}MB-{MEDIUM}" + ("-" + os.environ["P3_APPEND"].split()[0].replace("=", "") if os.environ.get("P3_APPEND") else "")
+TAG = os.environ.get("TEST_TAG") or f"{RAM}MB-{MEDIUM}" + ("-" + os.environ["P3_APPEND"].split()[0].replace("=", "") if os.environ.get("P3_APPEND") else "")
 SER = os.path.join(OUT, f"{TAG}.serial.sock")
 MON = os.path.join(OUT, f"{TAG}.mon.sock")
 LOG = os.path.join(OUT, f"{TAG}.serial.log")
@@ -115,7 +115,10 @@ def main():
             "-display", "none", "-name", "p3linux-test",
             "-serial", f"unix:{SER},server=on,wait=off",
             "-monitor", f"unix:{MON},server=on,wait=off",
-            "-net", "nic,model=e1000", "-net", "user"]
+            "-net", "nic,model=" + os.environ.get("QEMU_NIC", "e1000"), "-net", "user"]
+    if os.environ.get("QEMU_VGA"):
+        qemu[qemu.index("-vga") + 1] = os.environ["QEMU_VGA"]
+    qemu += os.environ.get("QEMU_EXTRA", "").split()
     if MEDIUM == "hdd":
         qemu += ["-drive", f"file={os.path.join(IMG, 'P3-Linux-hdd.img')},format=raw,if=ide,snapshot=on",
                  "-boot", "c"]
@@ -209,6 +212,21 @@ def main():
         sh("(p3-sysinfo &)")
         time.sleep(3)
         shot("05-sysinfo")
+        # hardware detection: drivers loaded automatically by udev
+        _, out = sh("lsmod | sed 1d | cut -d' ' -f1 | sort | tr '\\n' ' '")
+        mods = out.split()
+        check("   kernel modules loaded automatically", len(mods) > 0, " ".join(mods)[:300])
+        for m in filter(None, os.environ.get("EXPECT_MODULES", "").split(",")):
+            check(f"   driver loaded: {m}", m in mods)
+        if os.environ.get("EXPECT_SOUND"):
+            _, out = sh("cat /proc/asound/cards")
+            check("   sound card detected", "]:" in out, " ".join(out.split())[:120])
+            rc, _ = sh("aplay -q -d 1 -f cd /dev/zero", 20)
+            check("   sound playback (aplay)", rc == 0)
+        if os.environ.get("EXPECT_XDRV"):
+            rc, out = sh("grep -c '(II) %s(0)' /var/log/Xorg.0.log" % os.environ["EXPECT_XDRV"].upper())
+            n = out.strip().splitlines()[-1] if out.strip() else "0"
+            check(f"   X video driver in use: {os.environ['EXPECT_XDRV']}", n.isdigit() and int(n) > 0, f"{n} log lines")
         # stress: 5 more applications (9 windows in total)
         sh("(xterm &); (xterm &); (xterm &); (p3-files / &); (p3-edit &)")
         time.sleep(20)
