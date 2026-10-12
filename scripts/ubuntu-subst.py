@@ -138,7 +138,7 @@ def repack(root, topname, dest):
     raw = dest + ".tar"
     subprocess.check_call(["tar", "--sort=name", "--mtime=@1767225600", "--clamp-mtime", "--owner=0", "--group=0",
                            "--numeric-owner", "--format=gnu", "-cf", raw,
-                           "--transform", f"s,^\\.,{topname},", "-C", root, "."])
+                           "--transform", f"flags=rh;s,^\\.,{topname},", "-C", root, "."])
     comp = {"xz": ["xz", "-T1", "-6", "-f"], "gz": ["gzip", "-n", "-9", "-f"],
             "bz2": ["bzip2", "-9", "-f"]}[ext]
     subprocess.check_call(comp + [raw])
