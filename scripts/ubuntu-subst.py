@@ -273,7 +273,7 @@ def main():
         dld = pkg.get("dl_dir")
         if dld not in mapping or dld in done:
             continue
-        dls = [d for d in pkg.get("downloads", []) if d["uris"] and not d["uris"][0].startswith(("git", "local"))]
+        dls = [d for d in pkg.get("downloads", []) if d["uris"] and not d["uris"][0].startswith("local")]
         if not dls:
             continue
         src_file = dls[0]["source"]
