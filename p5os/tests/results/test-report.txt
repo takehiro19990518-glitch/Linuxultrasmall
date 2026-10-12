@@ -1,25 +1,25 @@
-P5OS test report - 2026-10-12 06:00:24
+P5OS test report - 2026-10-12 06:11:24
 QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)
 
 [PASS] boot_hdd_16mb_p5 (0.6 s)
     booted to prompt in 0.2 s (QEMU, -cpu pentium,model=1,stepping=7,-mmx,-apic, -m 16)
     screen:
         P5OS Booted Successfully
-        [    0.000] info: boot: drive 80, kernel 104 sectors at LBA 17, serial COM1
+        [    0.000] info: boot: drive 80, kernel 106 sectors at LBA 17, serial COM1
         [    0.000] info: cpu: GDT/IDT loaded, PIC remapped
-        [    0.000] info: pmm: 3967 frames managed (15868 KB), 3927 free, 40 reserved
+        [    0.000] info: pmm: 3967 frames managed (15868 KB), 3926 free, 41 reserved
         [    0.000] info: paging: identity map 0-00fe0000, 4 page table(s), guard pages
-        at 0 and 00113000
-        [    0.000] info: heap: 1024 KB at 00118000
-        [    0.000] info: timer: PIT channel 0 at 100 Hz
-        [    0.000] info: cpu: Intel Pentium (P5, 60/66 MHz class) [GenuineIntel fam 5 m
+        at 0 and 00114000
+        [    0.000] info: heap: 1024 KB at 00119000
+        [    0.010] info: timer: PIT channel 0 at 100 Hz
+        [    0.010] info: cpu: Intel Pentium (P5, 60/66 MHz class) [GenuineIntel fam 5 m
         odel 1 step 7]
-        [    0.000] info: kbd: PS/2 keyboard ready
-        [    0.010] info: ata hd0: "QEMU HARDDISK" 16128 sectors (7 MB), LBA, CHS 16/16/
+        [    0.010] info: kbd: PS/2 keyboard ready
+        [    0.020] info: ata hd0: "QEMU HARDDISK" 16128 sectors (7 MB), LBA, CHS 16/16/
         63
-        [    0.020] info: ata hd2: non-ATA device (signature eb14, ATAPI?) ignored
-        [    0.020] info: ata: 1 disk(s) found
-        [    0.030] info: p5fs: mounted hd0 at LBA 2048, label "P5OS", 14080 blocks (139
+        [    0.030] info: ata hd2: non-ATA device (signature eb14, ATAPI?) ignored
+        [    0.030] info: ata: 1 disk(s) found
+        [    0.040] info: p5fs: mounted hd0 at LBA 2048, label "P5OS", 14080 blocks (139
         62 free), 880 inodes
         P5OS 1.0
         CPU: Intel Pentium (P5, 60/66 MHz class) [GenuineIntel fam 5 model 1 step 7]
@@ -27,21 +27,21 @@ QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)
         Storage: P5FS mounted
         Type 'help' for commands.
         P5OS:/>
-[PASS] boot_floppy_data_disk (0.5 s)
-    floppy boot to prompt in 0.3 s
+[PASS] boot_floppy_data_disk (0.4 s)
+    floppy boot to prompt in 0.2 s
     P5FS "DATA" on hd0 (LBA 0) mounted at /
 [PASS] boot_isapc_no_pci (0.4 s)
     isapc: floppy boot + ISA IDE disk OK
 [PASS] memory_sizes (6.0 s)
     -m   1: rejected by stage 2 with an error message (expected)
-    -m   2: boots, heap 340 KB, 1024 KB free
-    -m   4: boots, heap 852 KB, 2560 KB free
-    -m   8: boots, heap 1024 KB, 6480 KB free
-    -m  16: boots, heap 1024 KB, 14664 KB free
-    -m  64: boots, heap 1024 KB, 63768 KB free
-[PASS] shell_commands (4.9 s)
+    -m   2: boots, heap 340 KB, 1020 KB free
+    -m   4: boots, heap 852 KB, 2556 KB free
+    -m   8: boots, heap 1024 KB, 6476 KB free
+    -m  16: boots, heap 1024 KB, 14660 KB free
+    -m  64: boots, heap 1024 KB, 63764 KB free
+[PASS] shell_commands (5.1 s)
     help/ver/echo/uptime/mem/cpu/dmesg/cls, history, backspace, Ctrl+C: OK
-    IRQ counts: timer=469 keyboard=296 spurious=0, keys dropped=0
+    IRQ counts: timer=478 keyboard=296 spurious=0, keys dropped=0
 [PASS] memtest (0.8 s)
       heap random alloc/free (2000 ops): PASS
       page frames write/verify (256 pages = 1024 KB): PASS
@@ -52,7 +52,7 @@ QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)
 [PASS] fs_operations (10.9 s)
     write/append/cat/mkdir/cd/pwd/ls/rm/rmdir/fsck + error cases + interactive write: OK
     host-side check of the disk image: OK, files ['README.TXT', 'hello.txt', 'multi.txt', 'note.txt']
-[PASS] fs_disktest_persistence (4.6 s)
+[PASS] fs_disktest_persistence (4.4 s)
            0 bytes: write+read OK
            1 bytes: write+read OK
          511 bytes: write+read OK
@@ -75,7 +75,7 @@ QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)
     6 consecutive boots in one QEMU session
 [PASS] halt (2.1 s)
     'halt': message shown, CPU in HLT with interrupts off, no further reaction
-[PASS] exceptions (5.9 s)
+[PASS] exceptions (5.7 s)
     crash div0 : panic screen shows '#DE Divide error'
     crash gpf  : panic screen shows '#GP General protection fault'
     crash ud   : panic screen shows '#UD Invalid opcode'
@@ -83,7 +83,7 @@ QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)
     crash stack: panic screen shows 'KERNEL STACK OVERFLOW'
     crash panic: panic screen shows 'test panic requested from shell'
 [PASS] soak (603.3 s)
-    601 s soak: 308 iterations of write/append/fsck (+memtest, disktest); uptime drift -0.17%, heap usage unchanged, peak kernel stack 4324 bytes
-    IRQ counts: timer=60207 keyboard=37040 spurious=0, keys dropped=0
+    601 s soak: 308 iterations of write/append/fsck (+memtest, disktest); uptime drift -0.14%, heap usage unchanged, peak kernel stack 4260 bytes
+    IRQ counts: timer=60224 keyboard=37040 spurious=0, keys dropped=0
 
 13 passed, 0 failed
