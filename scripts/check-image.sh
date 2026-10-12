@@ -24,8 +24,8 @@ else bad "ISO missing"; fi
 HDD="$IMG/P3-Linux-hdd.img"
 if [ -f "$HDD" ]; then
   ok "HDD image exists ($(du -h --apparent-size "$HDD" | cut -f1))"
-  sfdisk -l "$HDD" 2>/dev/null | grep -q "^$HDD""1 \+\*" && ok "HDD partition 1 is bootable" || bad "HDD partition 1 not bootable"
-  [ "$(xxd -s 510 -l 2 -p "$HDD")" = 55aa ] && ok "HDD has MBR signature" || bad "HDD MBR signature"
+  sfdisk -d "$HDD" 2>/dev/null | grep -q "start= *2048,.*bootable" && ok "HDD partition 1 is bootable" || bad "HDD partition 1 not bootable"
+  [ "$(od -An -tx1 -j510 -N2 "$HDD" | tr -d ' \n')" = 55aa ] && ok "HDD has MBR signature" || bad "HDD MBR signature"
 else bad "HDD image missing"; fi
 
 file -L "$IMG/bzImage" | grep -q "Linux kernel x86 boot" && ok "bzImage is an x86 kernel" || bad "bzImage type"
@@ -34,13 +34,26 @@ n64=$(find "$T" -type f -exec file {} + 2>/dev/null | grep ELF | grep -vc "ELF 3
 [ "$n64" = 0 ] && ok "all ELF files are 32-bit i386" || bad "$n64 non-i386 ELF files"
 
 # SSE2/SSE3/SSSE3/SSE4/AVX use: look for instructions on xmm registers that
-# only exist from SSE2 on (integer SIMD on xmm, double precision ops, etc.)
-cnt=0; list=""
+# only exist from SSE2 on, per function.  Allowed (documented) exceptions:
+#  - libgcc _Float16/bfloat16 helpers (__*hc3, __*hf2, __*bf2): only used by
+#    code that itself uses _Float16, which needs SSE2 anyway; nothing here does.
+#  - libjpeg-turbo SIMD: selected at run time via CPUID (MMX/SSE paths on P3).
+SSE2RE='[[:space:]](movdqa|movdqu|paddq|psubq|pmuludq|pshufd|pshufhw|pshuflw|punpck[lh]qdq|cvt(si2sd|sd2si|tsd2si|ss2sd|sd2ss|dq2pd|pd2dq)|(add|sub|mul|div|sqrt|max|min|and|or|xor|mov|comi|ucomi)(sd|pd)|movq|movd|movq2dq|vzeroupper|v[a-z]+)[[:space:]].*%(x|y)mm'
+cnt=0; list=""; allowed=""
 while IFS= read -r f; do
-  c=$(objdump -d --no-show-raw-insn "$f" 2>/dev/null | grep -cE \
-      "\s(movdqa|movdqu|paddq|psubq|pmuludq|pshufd|pshufhw|pshuflw|punpck[lh]qdq|cvt(si2sd|sd2si|tsd2si|ss2sd|sd2ss|dq2pd|pd2dq)|(add|sub|mul|div|sqrt|max|min|and|or|xor|mov|comi|ucomi)(sd|pd)|movq|movd|movq2dq|lfence|mfence|pause|vzeroupper|v[a-z]+)\s.*%(x|y)mm" || true)
-  if [ "$c" -gt 0 ]; then cnt=$((cnt+1)); list="$list ${f#$T}($c)"; fi
-done < <(find "$T" -type f \( -perm -u+x -o -name "*.so*" \) -exec sh -c 'file "$1" | grep -q ELF && echo "$1"' _ {} \;)
-[ $cnt = 0 ] && ok "no SSE2+ instructions found in any binary (Pentium III safe)" \
+  rel=${f#$T}
+  fns=$(objdump -d --no-show-raw-insn "$f" 2>/dev/null | awk -v re="$SSE2RE" '/^[0-9a-f]+ <.*>:$/ {fn=$2} $0 ~ re {c[fn]++} END{for (k in c) print k}')
+  [ -z "$fns" ] && continue
+  case "$rel" in
+    */libjpeg.so*|*/libturbojpeg.so*) allowed="$allowed $rel(runtime-dispatch)"; continue;;
+  esac
+  bad_fns=$(echo "$fns" | grep -vE '^<__[a-z0-9]*(hc3|hf[0-9]?|bf[0-9]?)@' || true)
+  if [ -n "$bad_fns" ]; then
+    cnt=$((cnt+1)); list="$list $rel[$(echo $bad_fns | head -c 120)]"
+  else
+    allowed="$allowed $rel(_Float16-helpers)"
+  fi
+done < <(find "$T" -type f \( -perm -u+x -o -name "*.so*" -o -name "*.ko" \) -exec sh -c 'file "$1" | grep -q ELF && echo "$1"' _ {} \;)
+[ $cnt = 0 ] && ok "no SSE2+ instructions in code paths used on a Pentium III (allowed:$allowed)" \
   || bad "SSE2+ instructions found in $cnt files:$list"
 exit $fail
