@@ -132,7 +132,7 @@ static int app_start(int argc, char **argv) {
         {"Multimedia/Play Music...", "p3-openfile"},
         {"Multimedia/Volume Control", "xterm -T Volume -e alsamixer"},
         {"Multimedia/Sound Test", "xterm -T 'Sound Test' -hold -e speaker-test -t wav -l 1"},
-        {"Games/LBreakout2", "lbreakout2"},
+        {"Games/LBreakout2 (128MB+)", "p3-needram 128 lbreakout2"},
         {"Games/LTris", "ltris"},
         {"Games/XBill", "xbill"},
         {"Games/XJump", "xjump"},
@@ -501,6 +501,25 @@ static int app_openfile(int, char **) {
     return 1;
 }
 
+// ------------------------------------------------------------ p3-needram
+// p3-needram <MB> <command...>: warn before starting a program that needs
+// more memory than this PC has (e.g. SDL games on a 64MB machine).
+static int app_needram(int argc, char **argv) {
+    if (argc < 3) return 2;
+    long need = atol(argv[1]), have = 0;
+    std::string mem = read_file("/proc/meminfo");
+    sscanf(field(mem, "MemTotal").c_str(), "%ld", &have);
+    have /= 1024;
+    if (have + 16 < need &&   // MemTotal excludes kernel/reserved memory
+        fl_choice("%s needs about %ld MB of memory.\nThis PC has %ld MB available,\n"
+                  "so it may be very slow or be closed by the system.",
+                  "Cancel", "Start anyway", 0, fl_filename_name(argv[2]), need, have) != 1)
+        return 0;
+    execvp(argv[2], argv + 2);
+    fl_alert("Cannot start %s", argv[2]);
+    return 1;
+}
+
 // ------------------------------------------------------------ main -------
 int main(int argc, char **argv) {
     signal(SIGCHLD, SIG_IGN);
@@ -513,6 +532,7 @@ int main(int argc, char **argv) {
     if (me == "p3-sysinfo") return app_sysinfo(argc, argv);
     if (me == "p3-shutdown") return app_shutdown(argc, argv);
     if (me == "p3-openfile") return app_openfile(argc, argv);
+    if (me == "p3-needram") return app_needram(argc, argv);
     fprintf(stderr, "usage: p3-desktop {p3-start|p3-files|p3-edit|p3-sysinfo|p3-shutdown}\n");
     return 1;
 }

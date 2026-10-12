@@ -48,3 +48,26 @@ QEMU で当時の機器を模擬し、udev によるドライバ自動読み込�
 ### 静的チェック（scripts/check-image.sh）
 - 全 ELF（カーネルモジュール 378 個を含む）が 32bit i386
 - Pentium III で実行されるコードに SSE2 以降の命令なし（例外: libjpeg-turbo は実行時 CPU 判定、libgcc の _Float16 補助関数は未使用）
+
+## アプリケーション起動テスト（ISO 起動、QEMU pentium3）
+
+各アプリを起動し、数秒後にプロセスが動作していることを確認して終了させる（`scripts/qemu-test.py` の APP_TESTS）。
+
+| アプリ | 64MB | 128MB |
+|---|---|---|
+| Dillo（Web ブラウザ） | ✅ | ✅ |
+| Links -g（Web ブラウザ） | ✅ | ✅ |
+| MuPDF（PDF） | ✅ | ✅ |
+| feh（画像） | ✅ | ✅ |
+| xcalc / xclock | ✅ | ✅ |
+| sc-im（表計算） | ✅ | ✅ |
+| LTris / XBill / XJump | ✅ | ✅ |
+| Chocolate Doom + Freedoom | ✅ | ✅ |
+| LBreakout2 | ❌ メモリ不足で強制終了（約25MB使用） | ✅ |
+
+- 64MB では LBreakout2 だけが動かないため、Start メニューに「128MB+」と表示し、起動時に「メモリ不足」の確認ダイアログを出す（`p3-needram`）
+- 128MB では全 31 項目 PASS（起動〜デスクトップ〜キーボード・マウス〜各アプリ〜ネットワーク〜再起動・終了）
+
+### SSE2 チェックで許可しているもの（実行時に CPU を判定して切り替えるライブラリ）
+libjpeg-turbo、OpenSSL（libcrypto）、xz（liblzma）、libFLAC、libgcc の _Float16 補助関数。
+いずれも `cpuid` による判定コードを含むことを `check-image.sh` で確認している。

@@ -21,7 +21,7 @@
     [exec] (Volume Control) {xterm -T Volume -e alsamixer}
   [end]
   [submenu] (Games)
-    [exec] (LBreakout2) {lbreakout2}
+    [exec] (LBreakout2 - 128MB+) {p3-needram 128 lbreakout2}
     [exec] (LTris) {ltris}
     [exec] (XBill) {xbill}
     [exec] (XJump) {xjump}
