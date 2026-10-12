@@ -43,10 +43,3 @@ $(foreach p,$(P3_LAZY_PKGS),$(eval $(p)_CONF_ENV += LDFLAGS="$$(TARGET_LDFLAGS) 
 # its own name for the TLS option (Buildroot's dillo.mk targets 3.3)
 DILLO_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -Wno-template-body -fpermissive"
 DILLO_CONF_OPTS += --enable-ssl
-
-# SDL_mixer 1.2.12 (Ubuntu): its m4 macros live in acinclude/
-SDL_MIXER_AUTORECONF_OPTS += -I acinclude
-define P3_SDL_MIXER_AUX_DIR
-	mkdir -p $(@D)/build-scripts
-endef
-SDL_MIXER_POST_PATCH_HOOKS += P3_SDL_MIXER_AUX_DIR

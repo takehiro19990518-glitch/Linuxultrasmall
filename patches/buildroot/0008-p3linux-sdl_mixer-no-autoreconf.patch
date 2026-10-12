@@ -1,0 +1,12 @@
+--- a/package/sdl_mixer/sdl_mixer.mk	2026-10-12 12:02:09.594357400 +0000
++++ b/package/sdl_mixer/sdl_mixer.mk	2026-10-12 12:02:09.598357400 +0000
+@@ -20,7 +20,8 @@
+ SDL_MIXER_DEPENDENCIES = sdl
+ 
+ # We're patching configure.in, so we need to autoreconf
+-SDL_MIXER_AUTORECONF = YES
++# P3LINUX: Ubuntu release tarball ships a generated configure
++SDL_MIXER_AUTORECONF = NO
+ 
+ SDL_MIXER_CONF_OPTS = \
+ 	--with-sdl-prefix=$(STAGING_DIR)/usr \
