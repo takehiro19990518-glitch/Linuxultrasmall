@@ -168,7 +168,7 @@ def main():
         S.expect(r"assword:", 20)
         S.send("p3linux\n")
         S.expect(r"# ", 20)
-        sh("export DISPLAY=:0 PS1='# '")
+        sh("export DISPLAY=:0 PS1='# '; stty cols 200; dmesg -n 1")
         _, out = sh("pidof Xorg fluxbox p3-start p3-sysinfo")
         check("   desktop processes (Xorg fluxbox p3-start p3-sysinfo)", len(out.split()) >= 3, out.strip())
         # 7. keyboard: Ctrl+Alt+T is bound to xterm in fluxbox

@@ -18,6 +18,8 @@ grep -q '^ttyS0::' "$T/etc/inittab" || \
 chmod 0755 "$T"/usr/sbin/p3-* "$T"/usr/bin/p3-session "$T"/usr/bin/p3-setres "$T"/usr/sbin/p3-install 2>/dev/null || true
 # X is started by /usr/sbin/p3-startx from inittab, not by Buildroot's script
 rm -f "$T/etc/init.d/S40xorg"
+# only the SSH client (dbclient) is wanted; no SSH server listening by default
+rm -f "$T/etc/init.d/S50dropbear"
 # groups referenced by eudev rules
 for g in input:x:101: kvm:x:102: sgx:x:103: render:x:104:; do
   grep -q "^${g%%:*}:" "$T/etc/group" || echo "$g" >> "$T/etc/group"
