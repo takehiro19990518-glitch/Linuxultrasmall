@@ -1,5 +1,12 @@
 include $(sort $(wildcard $(BR2_EXTERNAL_P3LINUX_PATH)/package/*/*.mk))
 
+# Many sources come from older upstream releases (the versions in the Ubuntu
+# archive, see scripts/ubuntu-sources.lock) that predate C23, which GCC 15
+# uses by default ("bool"/"true" as identifiers, unprototyped functions).
+# Build all C code as gnu17; C++ is unaffected.
+TARGET_CFLAGS += -std=gnu17
+TARGET_CXXFLAGS := $(filter-out -std=gnu17,$(TARGET_CXXFLAGS))
+
 # X.Org video drivers built for P3 Linux (see configs/p3linux_defconfig)
 P3_XVIDEO = VESA FBDEV CIRRUS MACH64 MGA NEOMAGIC R128 SAVAGE SILICONMOTION TDFX
 
