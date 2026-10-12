@@ -25,6 +25,7 @@ gumbo-parser pool/universe/g/gumbo-parser/gumbo-parser_0.13.0+dfsg.orig.tar.xz 1
 kmod pool/main/k/kmod/kmod_34.2.orig.tar.xz 012d16e2099115486d8aa9f2c2a23d058d3d0cad83113a60512647d25d3869e8 34.2 -
 less pool/main/l/less/less_668.orig.tar.gz 2819f55564d86d542abbecafd82ff61e819a3eec967faa36cd3e68f1596a44b8 668 -
 libcap pool/main/libc/libcap2/libcap2_2.75.orig.tar.xz de4e7e064c9ba451d5234dd46e897d7c71c96a9ebf9a0c445bc04f4742d83632 2.75 -
+libcurl pool/main/c/curl/curl_8.18.0.orig.tar.gz e9274a5f8ab5271c0e0e6762d2fce194d5f98acc568e4ce816845b2dcc0cf88f 8.18.0 -
 libdrm pool/main/libd/libdrm/libdrm_2.4.131.orig.tar.xz 45ba9983b51c896406a3d654de81d313b953b76e6391e2797073d543c5f617d5 2.4.131 -
 libevdev pool/main/libe/libevdev/libevdev_1.13.6+dfsg.orig.tar.xz 6643222f13cfbead0e30b8b74600f6d335f6ebb1ad8cbaf85783e36886689071 1.13.6 -
 libgcrypt pool/main/libg/libgcrypt20/libgcrypt20_1.12.0.orig.tar.bz2 0311454e678189bad62a7e9402a9dd793025efff6e7449898616e2fc75e0f4f5 1.12.0 -
@@ -37,6 +38,7 @@ libtool pool/main/libt/libtool/libtool_2.5.4.orig.tar.xz d9189031edeaa6aa74695b2
 libxcb pool/main/libx/libxcb/libxcb_1.17.0.orig.tar.gz 2c69287424c9e2128cb47ffe92171e10417041ec2963bceafb65cb3fcf8f0b85 1.17.0 -
 libxml2 pool/main/libx/libxml2/libxml2_2.15.2+dfsg.orig.tar.xz f1e80b8c76041d45840b96da2a5c0ddfb7ffcc923ef6687260e7ebb0fdaa26a5 2.15.2 -
 libzlib pool/main/z/zlib/zlib_1.3.dfsg+really1.3.1.orig.tar.gz 60dd315c07f616887caa029408308a018ace66e3d142726a97db164b3b8f69fb 1.3.1 -
+links pool/universe/l/links2/links2_2.29.orig.tar.bz2 22aa96c0b38e1a6f8f7ed9d7a4167a47fc37246097759ef6059ecf8f9ead7998 2.29 -
 lzip pool/main/l/lzip/lzip_1.25.orig.tar.xz b854b1e83c978485de6a8c3d47299dfca8d86ce771d05a278d5badcc9101e949 1.25 -
 mpc pool/main/m/mpclib3/mpclib3_1.3.1.orig.tar.gz ab642492f5cf882b74aa0cb730cd410a81edcdbec895183ce930e706c1c759b8 1.3.1 -
 mtdev pool/main/m/mtdev/mtdev_1.1.7.orig.tar.gz a55bd02a9af4dd266c0042ec608744fff3a017577614c057da09f1f4566ea32c 1.1.7 -

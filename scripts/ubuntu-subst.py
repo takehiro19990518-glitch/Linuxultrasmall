@@ -140,9 +140,9 @@ def repack(root, topname, dest):
                            "--numeric-owner", "--format=gnu", "-cf", raw,
                            "--transform", f"flags=rh;s,^\\.,{topname},", "-C", root, "."])
     comp = {"xz": ["xz", "-T1", "-6", "-f"], "gz": ["gzip", "-n", "-9", "-f"],
-            "bz2": ["bzip2", "-9", "-f"]}[ext]
+            "bz2": ["bzip2", "-9", "-f"], "lz": ["lzip", "-9", "-f"]}[ext]
     subprocess.check_call(comp + [raw])
-    produced = raw + {"xz": ".xz", "gz": ".gz", "bz2": ".bz2"}[ext]
+    produced = raw + {"xz": ".xz", "gz": ".gz", "bz2": ".bz2", "lz": ".lz"}[ext]
     os.replace(produced, dest)
 
 
