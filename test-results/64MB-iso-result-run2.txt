@@ -1,0 +1,18 @@
+PASS 1. BIOS boot from ISO (SYSLINUX) 
+PASS 2. Linux kernel boot 6.12.111
+PASS 3. root filesystem mount (CD + squashfs + overlay) 
+PASS 4. init (BusyBox init + rc scripts) 
+PASS 5. X.Org start 
+PASS 6. GUI desktop (fluxbox + start menu) 26s after power-on
+PASS    desktop processes (Xorg fluxbox p3-start p3-sysinfo) 164 168 171 172
+PASS 7. keyboard (Ctrl+Alt+T opens terminal) attempt 1
+PASS 9. terminal (xterm accepts typed command) 
+PASS 8. mouse (PS/2 mouse device in X, pointer injected) 22 log lines
+PASS 10. file manager (p3-files) 
+PASS 11. text editor (p3-edit) 
+PASS    stress: 9 windows open at once (4 xterm, 2 files, 2 edit, sysinfo) 8 app processes
+PASS    memory after stress (total used free shared buff avail) Mem: 50 31 2 0 17 15 / Swap: 25 2 23
+PASS    no out-of-memory kills 0 OOM events
+PASS    network (DHCP + ping gateway) 
+PASS 13. reboot (system comes back) 
+PASS 12. shutdown (poweroff turns the VM off) 
