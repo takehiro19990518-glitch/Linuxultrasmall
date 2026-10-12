@@ -7,7 +7,7 @@ include $(sort $(wildcard $(BR2_EXTERNAL_P3LINUX_PATH)/package/*/*.mk))
 # GCC 14+ also turned several old-C diagnostics into errors; keep them warnings.
 P3_OLDC_FLAGS = -std=gnu17 -Wno-error=incompatible-pointer-types \
 	-Wno-error=int-conversion -Wno-error=implicit-function-declaration \
-	-Wno-error=implicit-int
+	-Wno-error=implicit-int -fcommon
 TARGET_CFLAGS += $(P3_OLDC_FLAGS)
 TARGET_CXXFLAGS := $(filter-out $(P3_OLDC_FLAGS),$(TARGET_CXXFLAGS))
 
