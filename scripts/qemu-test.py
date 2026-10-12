@@ -227,6 +227,27 @@ def main():
             rc, out = sh("grep -c '(II) %s(0)' /var/log/Xorg.0.log" % os.environ["EXPECT_XDRV"].upper())
             n = out.strip().splitlines()[-1] if out.strip() else "0"
             check(f"   X video driver in use: {os.environ['EXPECT_XDRV']}", n.isdigit() and int(n) > 0, f"{n} log lines")
+        # applications: start each one, check it is still running, close it
+        if os.environ.get("APP_TESTS", "1") == "1":
+            sh("killall xterm p3-files p3-edit 2>/dev/null; true")
+            apps = [("dillo", "dillo /usr/share/p3linux/welcome.html", "dillo"),
+                    ("links -g", "links -g /usr/share/p3linux/welcome.html", "links"),
+                    ("mupdf-x11", "mupdf-x11 /usr/share/p3linux/sample.pdf", "mupdf-x11"),
+                    ("feh", "feh -g 320x240 /usr/share/p3linux/sample.png", "feh"),
+                    ("xcalc", "xcalc", "xcalc"), ("xclock", "xclock", "xclock"),
+                    ("sc-im", "xterm -e sc-im", "sc-im"),
+                    ("lbreakout2", "lbreakout2", "lbreakout2"), ("ltris", "ltris", "ltris"),
+                    ("xbill", "xbill", "xbill"), ("xjump", "xjump", "xjump"),
+                    ("chocolate-doom", "chocolate-doom -iwad /usr/share/games/doom/freedoom1.wad -nosound -window", "chocolate-doom")]
+            for name, cmd, proc in apps:
+                sh("(%s >/tmp/app.log 2>&1 &)" % cmd)
+                time.sleep(int(os.environ.get("APP_WAIT", "10")))
+                rc, _ = sh("pidof %s" % proc)
+                if name in ("dillo", "lbreakout2", "chocolate-doom"):
+                    shot("app-" + name.split()[0])
+                _, log = sh("tail -2 /tmp/app.log")
+                check(f"   app starts: {name}", rc == 0, "" if rc == 0 else " ".join(log.split())[:150])
+                sh("killall %s 2>/dev/null; sleep 1; killall -9 %s 2>/dev/null; true" % (proc, proc))
         # stress: 5 more applications (9 windows in total)
         sh("(xterm &); (xterm &); (xterm &); (p3-files / &); (p3-edit &)")
         time.sleep(20)
