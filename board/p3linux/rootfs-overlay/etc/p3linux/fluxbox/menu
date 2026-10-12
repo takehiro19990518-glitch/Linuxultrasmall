@@ -1,17 +1,50 @@
 [begin] (P3 Linux)
   [exec] (Terminal) {xterm}
   [exec] (File Manager) {p3-files}
+  [exec] (Open File...) {p3-openfile}
   [exec] (Text Editor) {p3-edit}
-  [exec] (System Information) {p3-sysinfo}
   [separator]
-  [submenu] (Settings)
+  [submenu] (Internet)
+    [exec] (Web Browser - Dillo) {dillo}
+    [exec] (Web Browser - Links) {links -g}
+    [exec] (IRC Chat) {xterm -T IRC -e irssi}
+    [exec] (FTP) {xterm -T FTP -e lftp}
+  [end]
+  [submenu] (Office)
+    [exec] (Spreadsheet - sc-im) {xterm -T Spreadsheet -e sc-im}
+    [exec] (Text Editor) {p3-edit}
+    [exec] (Open Word/Excel/PDF...) {p3-openfile}
+    [exec] (Calculator) {xcalc}
+  [end]
+  [submenu] (Multimedia)
+    [exec] (Play Music / View Images...) {p3-openfile}
+    [exec] (Volume Control) {xterm -T Volume -e alsamixer}
+  [end]
+  [submenu] (Games)
+    [exec] (LBreakout2) {lbreakout2}
+    [exec] (LTris) {ltris}
+    [exec] (XBill) {xbill}
+    [exec] (XJump) {xjump}
+    [exec] (Chess) {xterm -T Chess -e gnuchess}
+    [exec] (Doom - Freedoom) {chocolate-doom -iwad /usr/share/games/doom/freedoom1.wad}
+  [end]
+  [submenu] (Accessories)
+    [exec] (Calculator) {xcalc}
+    [exec] (Clock) {xclock}
+    [exec] (Midnight Commander) {xterm -T 'Midnight Commander' -e mc}
+    [exec] (Vim) {xterm -T Vim -e vim}
+  [end]
+  [submenu] (System)
+    [exec] (System Information) {p3-sysinfo}
+    [exec] (Task Manager) {xterm -T 'Task Manager' -e htop}
+    [exec] (Disk Usage) {xterm -T 'Disk Usage' -e ncdu /}
+    [exec] (Wired Network - DHCP) {xterm -T Network -hold -e sh -c 'udhcpc -i eth0 -n -q; ifconfig eth0'}
+    [exec] (Wi-Fi...) {xterm -T Wi-Fi -e p3-wifi}
     [exec] (Screen 640x480) {p3-setres 640x480}
     [exec] (Screen 800x600) {p3-setres 800x600}
     [exec] (Screen 1024x768) {p3-setres 1024x768}
     [config] (Window Manager)
   [end]
-  [reconfig] (Reload Desktop Config)
   [separator]
-  [exec] (Restart) {reboot}
-  [exec] (Shut Down) {poweroff}
+  [exec] (Shut Down...) {p3-shutdown}
 [end]

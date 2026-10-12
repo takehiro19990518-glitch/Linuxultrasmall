@@ -1,0 +1,27 @@
+#!/bin/sh
+# P3 Linux: simple Wi-Fi (WLAN) setup, runs in a terminal.
+echo "=== P3 Linux Wi-Fi setup ==="
+IF=$(for d in /sys/class/net/*; do [ -d "$d/wireless" ] || [ -d "$d/phy80211" ] && basename "$d"; done | head -1)
+if [ -z "$IF" ]; then
+  echo "No wireless network adapter found."
+  echo "(Supported: Atheros, Ralink, Realtek RTL8180/8187, Intersil Prism/Orinoco,"
+  echo " Marvell Libertas, Intel IPW2100/2200*, ZyDAS*  - *needs extra firmware)"
+  printf "Press Enter to close."; read x; exit 1
+fi
+ip link set "$IF" up 2>/dev/null || ifconfig "$IF" up
+echo "Adapter: $IF - scanning..."
+iw dev "$IF" scan 2>/dev/null | awk '/^BSS/ {sig=""} /signal:/ {sig=$2} /SSID:/ {sub(/^[ \t]*SSID: /,""); if ($0!="") print sig" dBm  "$0}' | sort -rn | uniq | head -20 | nl
+printf "\nNetwork name (SSID): "; read SSID
+[ -n "$SSID" ] || exit 0
+printf "Password (empty for an open network): "; stty -echo; read PSK; stty echo; echo
+mkdir -p /etc/wpa_supplicant
+if [ -n "$PSK" ]; then
+  wpa_passphrase "$SSID" "$PSK" > /etc/wpa_supplicant/p3.conf
+else
+  printf 'network={\n\tssid="%s"\n\tkey_mgmt=NONE\n}\n' "$SSID" > /etc/wpa_supplicant/p3.conf
+fi
+killall wpa_supplicant udhcpc 2>/dev/null; sleep 1
+wpa_supplicant -B -i "$IF" -c /etc/wpa_supplicant/p3.conf -D nl80211,wext >/dev/null 2>&1
+echo "Connecting..."; sleep 5
+udhcpc -i "$IF" -n -q -t 8 && echo "Connected:" && ifconfig "$IF" | grep 'inet addr' || echo "Connection failed (wrong password or weak signal?)"
+printf "Press Enter to close."; read x

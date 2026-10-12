@@ -1,7 +1,7 @@
 FLTK_CONFIG ?= fltk-config
 CXX ?= g++
 PREFIX ?= /usr
-APPS = p3-start p3-files p3-edit p3-sysinfo p3-shutdown
+APPS = p3-start p3-files p3-edit p3-sysinfo p3-shutdown p3-openfile
 
 all: p3-desktop
 

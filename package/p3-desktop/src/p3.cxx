@@ -112,15 +112,57 @@ static int app_start(int argc, char **argv) {
     b->labelcolor(FL_WHITE);
     b->labelfont(FL_HELVETICA_BOLD);
     b->labelsize(12);
-    b->add("Terminal", 0, start_cb, (void *)"xterm");
-    b->add("File Manager", 0, start_cb, (void *)"p3-files");
-    b->add("Text Editor", 0, start_cb, (void *)"p3-edit");
-    b->add("System Information", 0, start_cb, (void *)"p3-sysinfo", FL_MENU_DIVIDER);
-    b->add("Settings/Screen 640x480", 0, start_cb, (void *)"p3-setres 640x480");
-    b->add("Settings/Screen 800x600", 0, start_cb, (void *)"p3-setres 800x600");
-    b->add("Settings/Screen 1024x768", 0, start_cb, (void *)"p3-setres 1024x768");
-    b->add("Settings/Network (DHCP)", 0, start_cb,
-           (void *)"xterm -hold -e sh -c 'udhcpc -i eth0 -n -q; ifconfig eth0'", FL_MENU_DIVIDER);
+    // Start menu: label path, command (submenus via "/")
+    static const char *items[][2] = {
+        {"Terminal", "xterm"},
+        {"File Manager", "p3-files"},
+        {"Open File...", "p3-openfile"},
+        {"_Text Editor", "p3-edit"},
+        {"Internet/Web Browser (Dillo)", "dillo"},
+        {"Internet/Web Browser (Links)", "links -g"},
+        {"Internet/IRC Chat (irssi)", "xterm -T IRC -e irssi"},
+        {"Internet/FTP (lftp)", "xterm -T FTP -e lftp"},
+        {"Internet/Remote Login (SSH)", "xterm -T SSH -e sh -c 'printf \"user@host: \"; read h; dbclient $h'"},
+        {"Office/Spreadsheet (sc-im)", "xterm -T Spreadsheet -e sc-im"},
+        {"Office/Text Editor", "p3-edit"},
+        {"Office/Open Word, Excel, PDF...", "p3-openfile"},
+        {"Office/Calculator", "xcalc"},
+        {"Graphics/Image Viewer", "p3-openfile"},
+        {"Graphics/PDF Viewer", "p3-openfile"},
+        {"Multimedia/Play Music...", "p3-openfile"},
+        {"Multimedia/Volume Control", "xterm -T Volume -e alsamixer"},
+        {"Multimedia/Sound Test", "xterm -T 'Sound Test' -hold -e speaker-test -t wav -l 1"},
+        {"Games/LBreakout2", "lbreakout2"},
+        {"Games/LTris", "ltris"},
+        {"Games/XBill", "xbill"},
+        {"Games/XJump", "xjump"},
+        {"Games/Chess (GNU Chess)", "xterm -T Chess -e gnuchess"},
+        {"Games/Doom (Freedoom)", "chocolate-doom -iwad /usr/share/games/doom/freedoom1.wad"},
+        {"Games/Doom II (Freedoom)", "chocolate-doom -iwad /usr/share/games/doom/freedoom2.wad"},
+        {"Accessories/Calculator", "xcalc"},
+        {"Accessories/Clock", "xclock"},
+        {"Accessories/Midnight Commander", "xterm -T 'Midnight Commander' -e mc"},
+        {"Accessories/Vim", "xterm -T Vim -e vim"},
+        {"Accessories/Nano", "xterm -T Nano -e nano"},
+        {"System/System Information", "p3-sysinfo"},
+        {"System/Task Manager (htop)", "xterm -T 'Task Manager' -e htop"},
+        {"System/Disk Usage (ncdu)", "xterm -T 'Disk Usage' -e ncdu /"},
+        {"System/Hardware (PCI, USB)", "xterm -T Hardware -hold -e sh -c 'lspci; echo; lsusb; echo; lsmod'"},
+        {"Settings/Wired Network (DHCP)", "xterm -T Network -hold -e sh -c 'udhcpc -i eth0 -n -q; ifconfig eth0'"},
+        {"Settings/Wi-Fi...", "xterm -T Wi-Fi -e p3-wifi"},
+        {"Settings/Screen 640x480", "p3-setres 640x480"},
+        {"Settings/Screen 800x600", "p3-setres 800x600"},
+        {"Settings/_Screen 1024x768", "p3-setres 1024x768"},
+    };
+    for (auto &it : items) {
+        const char *label = it[0];
+        int flags = 0;
+        std::string l = label;
+        size_t u = l.find("/_");
+        if (l[0] == '_') { l.erase(0, 1); flags = FL_MENU_DIVIDER; }
+        else if (u != std::string::npos) { l.erase(u + 1, 1); flags = FL_MENU_DIVIDER; }
+        b->add(l.c_str(), 0, start_cb, (void *)it[1], flags);
+    }
     b->add("Install to Hard Disk...", 0, start_cb, (void *)"xterm -e p3-install", FL_MENU_DIVIDER);
     b->add("Shut Down...", 0, start_cb, (void *)"p3-shutdown");
     w->end();
@@ -355,7 +397,7 @@ static void fm_open(Fl_Widget *, void *) {
     if (n.empty()) return;
     std::string p = n == ".." ? F.cwd + "/.." : join(F.cwd, n);
     if (fl_filename_isdir(p.c_str())) fm_go(p);
-    else spawn("p3-edit " + shq(p));
+    else spawn("p3-open " + shq(p));
 }
 static void fm_list_cb(Fl_Widget *, void *) { if (Fl::event_clicks()) { Fl::event_clicks(0); fm_open(0, 0); } }
 static void fm_up(Fl_Widget *, void *) { fm_go(F.cwd + "/.."); }
@@ -450,6 +492,15 @@ static int app_files(int argc, char **argv) {
     return Fl::run();
 }
 
+// ------------------------------------------------------------ p3-openfile
+static int app_openfile(int, char **) {
+    const char *h = getenv("HOME");
+    const char *f = fl_file_chooser("Open File - P3 Linux", "*", h ? h : "/");
+    if (!f) return 0;
+    execlp("p3-open", "p3-open", f, (char *)0);
+    return 1;
+}
+
 // ------------------------------------------------------------ main -------
 int main(int argc, char **argv) {
     signal(SIGCHLD, SIG_IGN);
@@ -461,6 +512,7 @@ int main(int argc, char **argv) {
     if (me == "p3-edit") return app_edit(argc, argv);
     if (me == "p3-sysinfo") return app_sysinfo(argc, argv);
     if (me == "p3-shutdown") return app_shutdown(argc, argv);
+    if (me == "p3-openfile") return app_openfile(argc, argv);
     fprintf(stderr, "usage: p3-desktop {p3-start|p3-files|p3-edit|p3-sysinfo|p3-shutdown}\n");
     return 1;
 }

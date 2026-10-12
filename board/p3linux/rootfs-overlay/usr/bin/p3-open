@@ -1,0 +1,23 @@
+#!/bin/sh
+# P3 Linux: open a file with a suitable application (used by the file manager).
+f="$1"
+[ -n "$f" ] || exit 1
+if [ -d "$f" ]; then exec p3-files "$f"; fi
+lc=$(echo "$f" | tr 'A-Z' 'a-z')
+view() { exec xterm -T "$(basename "$f")" -e sh -c "$1 | less"; }
+case "$lc" in
+  *.pdf|*.xps|*.epub|*.cbz) exec mupdf-x11 "$f";;
+  *.jpg|*.jpeg|*.png|*.gif|*.bmp|*.tif|*.tiff|*.pnm|*.ppm|*.xpm) exec feh -. -g 640x480 "$f";;
+  *.htm|*.html) exec dillo "$f";;
+  *.mp3|*.mp2) exec xterm -T "Music: $(basename "$f")" -e mpg123 -v "$f";;
+  *.wav|*.ogg|*.flac|*.au|*.aiff|*.voc) exec xterm -T "Music: $(basename "$f")" -e play "$f";;
+  *.doc) view "antiword \"$f\"";;
+  *.xls) view "xls2csv \"$f\"";;
+  *.ppt) view "catppt \"$f\"";;
+  *.rtf) view "catdoc \"$f\"";;
+  *.csv|*.xlsx|*.sc) exec xterm -T "Spreadsheet" -e sc-im "$f";;
+  *.zip|*.7z|*.tar|*.tgz|*.gz|*.bz2|*.xz|*.rar) view "7za l \"$f\"";;
+  *.wad) exec chocolate-doom -iwad "$f";;
+  *) if file -b "$f" 2>/dev/null | grep -qiE 'text|empty'; then exec p3-edit "$f"; fi
+     exec xterm -T "$(basename "$f")" -e sh -c "file \"$f\"; echo; hexdump -C \"$f\" | less";;
+esac
