@@ -8,8 +8,9 @@ SC_IM_LICENSE = BSD-4-Clause
 SC_IM_LICENSE_FILES = LICENSE
 SC_IM_DEPENDENCIES = ncurses host-pkgconf
 define SC_IM_BUILD_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/src CC="$(TARGET_CC)" prefix=/usr \
-		CFLAGS="$(TARGET_CFLAGS) -std=gnu17" PKG_CONFIG="$(PKG_CONFIG_HOST_BINARY)" YACC="bison -y"
+	$(TARGET_MAKE_ENV) CFLAGS="$(TARGET_CFLAGS)" LDFLAGS="$(TARGET_LDFLAGS)" \
+		$(MAKE) -C $(@D)/src CC="$(TARGET_CC)" prefix=/usr \
+		PKG_CONFIG="$(PKG_CONFIG_HOST_BINARY)" YACC="bison -y"
 endef
 define SC_IM_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(@D)/src/sc-im $(TARGET_DIR)/usr/bin/sc-im
