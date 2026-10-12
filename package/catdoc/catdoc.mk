@@ -9,4 +9,5 @@ CATDOC_LICENSE_FILES = COPYING
 CATDOC_CONF_OPTS = --disable-wordview --without-wish
 CATDOC_CONF_ENV = CFLAGS="$(TARGET_CFLAGS) -std=gnu17"
 CATDOC_MAKE_OPTS = -j1
+CATDOC_INSTALL_TARGET_OPTS = installroot=$(TARGET_DIR) install
 $(eval $(autotools-package))
