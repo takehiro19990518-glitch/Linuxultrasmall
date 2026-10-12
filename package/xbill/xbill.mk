@@ -8,5 +8,5 @@ XBILL_LICENSE = GPL-2.0+
 XBILL_LICENSE_FILES = README
 XBILL_DEPENDENCIES = xlib_libXaw xlib_libXpm xlib_libXt
 XBILL_CONF_OPTS = --disable-gtk --disable-motif --enable-athena
-XBILL_CONF_ENV = CFLAGS="$(TARGET_CFLAGS) -std=gnu17 -fcommon"
+XBILL_CONF_ENV = CFLAGS="$(TARGET_CFLAGS) -fcommon" LIBS="-lXpm"
 $(eval $(autotools-package))
