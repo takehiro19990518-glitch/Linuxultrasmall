@@ -43,3 +43,7 @@ $(foreach p,$(P3_LAZY_PKGS),$(eval $(p)_CONF_ENV += LDFLAGS="$$(TARGET_LDFLAGS) 
 # its own name for the TLS option (Buildroot's dillo.mk targets 3.3)
 DILLO_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -Wno-template-body -fpermissive"
 DILLO_CONF_OPTS += --enable-ssl
+
+# MuPDF from the Ubuntu archive is "+ds" (bundled lcms2mt fork removed):
+# build without ICC colour management, against the system libraries.
+MUPDF_MAKE_OPTS += USE_SYSTEM_LCMS2=yes XCFLAGS="$(TARGET_CFLAGS) -DFZ_ENABLE_ICC=0"
