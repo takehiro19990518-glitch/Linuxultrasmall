@@ -161,8 +161,24 @@ def _gawk_fixup(root):
                 "clean distclean mostlyclean maintainer-clean info dvi pdf html:\n\t@:\n")
 
 
-# per-package fixups for Debian-modified (dfsg) source trees
+def _xdriver_fixup(root):
+    # Legacy X drivers (Ubuntu 18.04 versions) predate xserver 21's rename of
+    # OptionValueRec's union member "bool" -> "boolean".
+    for dp, _, files in os.walk(root):
+        for fn in files:
+            if fn.endswith((".c", ".h")):
+                p = os.path.join(dp, fn)
+                t = open(p, errors="surrogateescape").read()
+                t2 = re.sub(r"\.value\.bool\b", ".value.boolean", t)
+                t2 = re.sub(r"(\]|\))\.bool\b", r"\1.boolean", t2)
+                if t2 != t:
+                    open(p, "w", errors="surrogateescape").write(t2)
+
+
+# per-package fixups for Debian-modified (dfsg) or legacy source trees
 FIXUPS = {"gmp": _gmp_fixup, "gawk": _gawk_fixup}
+for _d in ("mach64", "savage", "trident", "neomagic", "tdfx", "siliconmotion", "mga", "r128", "cirrus"):
+    FIXUPS["xdriver_xf86-video-" + _d] = _xdriver_fixup
 
 
 def patch_dirs(pdir, ver):
