@@ -12,7 +12,7 @@ ISOLINUX_BIN=${ISOLINUX_BIN:-/usr/lib/ISOLINUX/isolinux.bin}
 ISOHDPFX=${ISOHDPFX:-/usr/lib/ISOLINUX/isohdpfx.bin}
 MBR_BIN=${MBR_BIN:-/usr/lib/syslinux/mbr/mbr.bin}
 VERSION=$(sed -n 's/^VERSION="\(.*\)"/\1/p' "$T/etc/os-release")
-CMDLINE_COMMON="console=tty0 console=ttyS0,115200 vga=0x314 loglevel=4 net.ifnames=0"
+CMDLINE_COMMON="console=tty0 console=ttyS0,115200 loglevel=4 net.ifnames=0"
 
 # ---------- initramfs (busybox + musl only) ----------
 R="$IMG/initramfs-root"
