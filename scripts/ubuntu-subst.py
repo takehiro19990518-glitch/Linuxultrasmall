@@ -179,8 +179,42 @@ def _xdriver_fixup(root):
                     open(p, "w", errors="surrogateescape").write(t2)
 
 
+MUPDF_FONT_TAG = "1.23.10"
+MUPDF_FONTS = {
+    "urw/Dingbats.cff": "5e833db6ebcd4df810075dc538e07e8d9b64a3168da29e93447e9f98852658bc",
+    "urw/NimbusMonoPS-Regular.cff": "2e8380cc08f257fb0b301079323a442918ec9d69582c95607da5543b362aa6d6",
+    "urw/NimbusMonoPS-Italic.cff": "b8bce31c935e0888435387d6ec610700afcc06a778433004e56348d374a3bf3a",
+    "urw/NimbusMonoPS-Bold.cff": "aba820052e08d413b94465af8f1401e942234b57ac091a9c0e0a1dc10bb3f091",
+    "urw/NimbusMonoPS-BoldItalic.cff": "9edb0d4b29b122a9f9f8098815ca99e5d3a00b8a106e3c659d66c5ccadde2c9e",
+    "urw/NimbusRoman-Regular.cff": "eb609a306b81357853ba91c2a3c47f3bba04f3a8cfdeedc733b1aa4af5d03d4c",
+    "urw/NimbusRoman-Italic.cff": "9deed810d473df0bfe15f426b2e69e560bcb756b801a9cbcebdd5cd82519ffa6",
+    "urw/NimbusRoman-Bold.cff": "219011281845fd509a0042c1b70bf98d49e0f562815a6b4a2549ef2ca14fa70a",
+    "urw/NimbusRoman-BoldItalic.cff": "12b53139c10085e8fdc7d427ee00f49fa80ac7d0c578fd9ca9196c80e2cbf59f",
+    "urw/NimbusSans-Regular.cff": "366720e054067fa49d030f58005c739fc787dcc9727a9327a28767777791d706",
+    "urw/NimbusSans-Italic.cff": "fa6acc6f51b5935a6b7defbc3ead480cd4906e3b198930470335db9a9bff6590",
+    "urw/NimbusSans-Bold.cff": "d4ea80d1d0e29a1e950808009ca8f96fe07a0670b60b556f6b2cf0705337fa9f",
+    "urw/NimbusSans-BoldItalic.cff": "9cdfc2d0947339dce76f99bdf9e2d9fe01e472a384cf683007e6a0bb35634623",
+    "urw/StandardSymbolsPS.cff": "cc495f1f0260c680947225beb8c7ddc426dbc66f0f035f1ca9da08f4266e3f9b",
+    "droid/DroidSansFallback.ttf": "ee38813ea00c3e32add4268fff7fff9e39417b4913cb13be2415164a47807cc2",
+}
+
+
+def _mupdf_fixup(root):
+    # Ubuntu's mupdf is "+ds": the embedded fonts are removed.  Restore the
+    # PDF Base14 fonts (URW) and DroidSansFallback (CJK) from the matching
+    # upstream tag, verified by SHA256; the remaining font sets are disabled
+    # with TOFU_* defines (see external.mk).
+    for rel, want in MUPDF_FONTS.items():
+        dest = os.path.join(root, "resources", "fonts", rel)
+        os.makedirs(os.path.dirname(dest), exist_ok=True)
+        fetch("https://raw.githubusercontent.com/ArtifexSoftware/mupdf/%s/resources/fonts/%s"
+              % (MUPDF_FONT_TAG, rel), dest)
+        if sha256(dest) != want:
+            sys.exit("SHA256 mismatch for mupdf font " + rel)
+
+
 # per-package fixups for Debian-modified (dfsg) or legacy source trees
-FIXUPS = {"gmp": _gmp_fixup, "gawk": _gawk_fixup}
+FIXUPS = {"gmp": _gmp_fixup, "gawk": _gawk_fixup, "mupdf": _mupdf_fixup}
 for _d in ("mach64", "savage", "trident", "neomagic", "tdfx", "siliconmotion", "mga", "r128", "cirrus"):
     FIXUPS["xdriver_xf86-video-" + _d] = _xdriver_fixup
 
