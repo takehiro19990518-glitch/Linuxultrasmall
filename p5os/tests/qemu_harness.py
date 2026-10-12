@@ -148,9 +148,9 @@ class Qemu:
         """Type a shell command, wait for the next prompt, return its output."""
         start = len(self.serial())
         self.type(line + "\n")
-        m = self.wait_serial(expect or r"P5OS:[^>\n]*> $", timeout=timeout, start=start)
+        m = self.wait_serial(expect or r"P5OS[^>\n]*> $", timeout=timeout, start=start)
         if expect:
-            self.wait_serial(r"P5OS:[^>\n]*> $", timeout=timeout, start=m.end())
+            self.wait_serial(r"P5OS[^>\n]*> $", timeout=timeout, start=m.end())
         out = self.serial()[start:]
         # strip the echoed command line and the trailing prompt
         lines = out.split("\n")
