@@ -154,7 +154,6 @@ wget             wget
 xapp_xcalc       x11-apps xcalc
 xapp_xclock      x11-apps xclock
 xz               xz-utils
-zip              zip
 libopenssl       openssl
 sox              sox
 libsndfile       libsndfile
