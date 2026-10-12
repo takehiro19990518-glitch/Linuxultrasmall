@@ -173,6 +173,8 @@ def _xdriver_fixup(root):
                 t2 = re.sub(r"(\]|\))\.bool\b", r"\1.boolean", t2)
                 # xf86DisableRandR() was removed in xserver 1.20+ (no-op)
                 t2 = re.sub(r"\bxf86DisableRandR\s*\(\s*\)\s*;", ";", t2)
+                # ScrnInfoRec.maxHValue/maxVValue were removed (only ever informative)
+                t2 = re.sub(r"(?m)^[ \t]*[\w>.-]+->max[HV]Value\s*=[^;]*;[ \t]*$", "", t2)
                 if t2 != t:
                     open(p, "w", errors="surrogateescape").write(t2)
 

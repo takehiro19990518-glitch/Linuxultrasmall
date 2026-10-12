@@ -102,3 +102,4 @@ xdriver_xf86-video-r128         xserver-xorg-video-r128
 xdriver_xf86-video-savage       xserver-xorg-video-savage
 xdriver_xf86-video-siliconmotion xserver-xorg-video-siliconmotion
 xdriver_xf86-video-tdfx         xserver-xorg-video-tdfx
+xdriver_xf86-video-mach64       xserver-xorg-video-mach64
