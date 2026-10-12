@@ -213,8 +213,17 @@ def _mupdf_fixup(root):
             sys.exit("SHA256 mismatch for mupdf font " + rel)
 
 
+def _sox_fixup(root):
+    # sox 14.4.2 refuses to build on C libraries it does not know (musl);
+    # as its own comment says, the #error can simply be removed (only
+    # file-type detection on pipes is lost).
+    p = os.path.join(root, "src", "formats.c")
+    t = open(p).read()
+    open(p, "w").write(t.replace("#error FIX NEEDED HERE", "/* P3LINUX: musl, no pipe rewind */"))
+
+
 # per-package fixups for Debian-modified (dfsg) or legacy source trees
-FIXUPS = {"gmp": _gmp_fixup, "gawk": _gawk_fixup, "mupdf": _mupdf_fixup}
+FIXUPS = {"gmp": _gmp_fixup, "gawk": _gawk_fixup, "mupdf": _mupdf_fixup, "sox": _sox_fixup}
 for _d in ("mach64", "savage", "trident", "neomagic", "tdfx", "siliconmotion", "mga", "r128", "cirrus"):
     FIXUPS["xdriver_xf86-video-" + _d] = _xdriver_fixup
 

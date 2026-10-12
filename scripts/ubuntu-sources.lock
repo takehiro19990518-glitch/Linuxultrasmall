@@ -59,6 +59,7 @@ sdl pool/main/libs/libsdl1.2/libsdl1.2_1.2.15+dfsg2.orig.tar.gz ec4d5ea4714b92f8
 sdl2 pool/main/libs/libsdl2/libsdl2_2.32.10+dfsg.orig.tar.gz 31bac5add36f98b55e3fcf4456f0dab50a06cf06bbcde283be567f64b05b95f3 2.32.10 -
 sdl_mixer pool/universe/s/sdl-mixer1.2/sdl-mixer1.2_1.2.12.orig.tar.gz 1644308279a975799049e4826af2cfc787cad2abb11aa14562e402521f86992a 1.2.12 0001-Add-Libs.private-field-to-pkg-config-file.patch,0002-configure__set_macro_directory.patch,0003-configure.ac-fix-static-linking-with-tremor.patch
 sdl_net pool/universe/s/sdl-net1.2/sdl-net1.2_1.2.8.orig.tar.gz 5f4a7a8bb884f793c278ac3f3713be41980c5eedccecff0260411347714facb4 1.2.8 -
+sox pool/universe/s/sox/sox_14.4.2+git20190427.orig.tar.bz2 81a6956d4330e75b5827316e44ae381e6f1e8928003c6aa45896da9041ea149c 14.4.2 0001-Make-SoX-support-uclibc-based-toolchains.patch,0002-configure.ac-put-back-disable-stack-protector.patch,0003-configure.ac-fix-static-linking-with-id3tag.patch,0004-configure.ac-fix-static-linking-with-magic.patch,0005-configure.ac-fix-static-linking-with-sndfile.patch,0006-voc-word-width-should-never-be-0-to-avoid-division-b.patch
 util-linux pool/main/u/util-linux/util-linux_2.41.3.orig.tar.xz 3330d873f0fceb5560b89a7dc14e4f3288bbd880e96903ed9b50ec2b5799e58b 2.41.3 0003-loopdev-use-openat2-RESOLVE_NO_SYMLINKS-for-backing-.patch
 vim pool/main/v/vim/vim_9.1.2141.orig.tar.xz d4de759838a10f610ef4a121b84c6ed937f68cc0e15a9af6763904081aa78758 9.1.2141 -
 wget pool/main/w/wget/wget_1.25.0.orig.tar.gz 766e48423e79359ea31e41db9e5c289675947a7fcf2efdcedb726ac9d0da3784 1.25.0 -
