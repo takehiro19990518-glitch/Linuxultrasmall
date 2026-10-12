@@ -127,7 +127,6 @@ lbreakout2       lbreakout2
 lcms2            lcms2
 less             less
 lftp             lftp
-libao            libao
 libcap           libcap2
 libcurl          curl
 libevent         libevent
