@@ -1,0 +1,6 @@
+config BR2_PACKAGE_P3_FIRMWARE
+	bool "p3-firmware"
+	help
+	  Firmware for P3-era devices: Radeon R100-R500, Ralink and
+	  Atheros USB/PCI WLAN, Marvell Libertas, Realtek/Intel/
+	  Broadcom/3Com NICs (subset of linux-firmware).

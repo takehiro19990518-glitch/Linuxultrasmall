@@ -24,7 +24,7 @@ import hashlib, json, lzma, os, subprocess, sys, urllib.request
 UBUNTU = os.environ.get("UBUNTU_MIRROR", "http://archive.ubuntu.com/ubuntu")
 SUITES = ["stonking", "resolute", "resolute-updates", "questing", "questing-updates",
           "plucky", "plucky-updates", "noble", "noble-updates", "noble-security",
-          "jammy", "jammy-updates", "focal", "focal-updates"]
+          "jammy", "jammy-updates", "focal", "focal-updates", "bionic", "bionic-updates"]
 COMPONENTS = ["main", "universe"]
 
 

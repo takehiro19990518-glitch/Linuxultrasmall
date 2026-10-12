@@ -30,7 +30,7 @@ LOCK = os.path.join(HERE, "ubuntu-sources.lock")
 MAP = os.path.join(HERE, "ubuntu-src-map.txt")
 SUITES = ["stonking", "resolute", "resolute-updates", "questing", "questing-updates",
           "plucky", "plucky-updates", "noble", "noble-updates", "noble-security",
-          "jammy", "jammy-updates", "focal", "focal-updates"]
+          "jammy", "jammy-updates", "focal", "focal-updates", "bionic", "bionic-updates"]
 
 
 def sha256(path):

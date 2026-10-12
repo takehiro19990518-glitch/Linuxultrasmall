@@ -81,3 +81,27 @@ xterm            xterm
 libgcrypt        libgcrypt20
 libgpg-error     libgpg-error
 xapp_xmodmap     x11-xserver-utils xmodmap
+# hardware support
+alsa-lib         alsa-lib
+alsa-utils       alsa-utils
+cifs-utils       cifs-utils
+bison            bison
+iw               iw
+libnl            libnl3
+libtalloc        talloc
+libusb           libusb-1.0
+pciutils         pciutils
+usbutils         usbutils
+wireless-regdb   wireless-regdb
+wireless_tools   wireless-tools
+wpa_supplicant   wpa
+xdriver_xf86-input-synaptics    xserver-xorg-input-synaptics
+xdriver_xf86-video-cirrus       xserver-xorg-video-cirrus
+xdriver_xf86-video-mach64       xserver-xorg-video-mach64
+xdriver_xf86-video-mga          xserver-xorg-video-mga
+xdriver_xf86-video-neomagic     xserver-xorg-video-neomagic
+xdriver_xf86-video-r128         xserver-xorg-video-r128
+xdriver_xf86-video-savage       xserver-xorg-video-savage
+xdriver_xf86-video-siliconmotion xserver-xorg-video-siliconmotion
+xdriver_xf86-video-tdfx         xserver-xorg-video-tdfx
+xdriver_xf86-video-trident      xserver-xorg-video-trident

@@ -1,0 +1,25 @@
+#!/bin/sh
+# P3 Linux: initialise sound cards (ALSA starts muted) and restore volume.
+STATE=/var/lib/alsa/asound.state
+case "$1" in
+  start)
+    # udev loads the drivers; give slow ISA/PCI cards a moment to register
+    n=0; while [ ! -e /proc/asound/cards ] && [ $n -lt 10 ]; do sleep 0.5; n=$((n+1)); done
+    grep -q '^ *[0-9]' /proc/asound/cards 2>/dev/null || exit 0
+    if [ -f "$STATE" ]; then
+      alsactl -f "$STATE" restore >/dev/null 2>&1
+    else
+      for c in $(sed -n 's/^ *\([0-9]\+\) .*/\1/p' /proc/asound/cards); do
+        alsactl init "$c" >/dev/null 2>&1
+        for ctl in Master PCM Front Speaker Headphone Wave; do
+          amixer -q -c "$c" sset "$ctl" 80% unmute 2>/dev/null
+        done
+      done
+    fi
+    echo "Sound: $(sed -n 's/^ *[0-9]\+ \[[^]]*\]: //p' /proc/asound/cards | head -1)"
+    ;;
+  stop)
+    mkdir -p /var/lib/alsa && alsactl -f "$STATE" store >/dev/null 2>&1
+    ;;
+esac
+exit 0
