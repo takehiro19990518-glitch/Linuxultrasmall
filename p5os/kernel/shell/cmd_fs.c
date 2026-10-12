@@ -231,6 +231,31 @@ static int cmd_df(int argc, char **argv, const char *rest)
     return 0;
 }
 
+static int cmd_mount(int argc, char **argv, const char *rest)
+{
+    int status = 0;
+    if (argc > 1) {
+        int rc = fs_mount(argv[1]);
+        if (rc) {
+            console_set_attr(ATTR_ERROR);
+            if (!ata_find(argv[1]))
+                kprintf("mount: %s: no such disk (see 'disks')\n", argv[1]);
+            else if (rc == E_NODEV)
+                kprintf("mount: %s: no P5FS file system on this disk\n", argv[1]);
+            else
+                kprintf("mount: %s: %s\n", argv[1], strerror(rc));
+            console_set_attr(ATTR_NORMAL);
+            status = 1;
+        }
+    }
+    struct fs_info fi;
+    if (fs_info(&fi))
+        kprintf("No file system mounted.\n");
+    else
+        kprintf("P5FS \"%s\" on %s (LBA %u) mounted at /\n", fi.label, fi.device, fi.part_start);
+    return status;
+}
+
 static int cmd_fsck(int argc, char **argv, const char *rest)
 {
     int rc = fs_check(true);
@@ -369,6 +394,7 @@ const struct shell_cmd fs_commands[] = {
     { "cd",     "[dir]",         "change directory", cmd_cd },
     { "pwd",    "",              "print current directory", cmd_pwd },
     { "df",     "",              "file system usage", cmd_df },
+    { "mount",  "[hdN]",         "show/switch the mounted disk", cmd_mount },
     { "fsck",   "",              "check file system consistency", cmd_fsck },
     { "disks",  "",              "list IDE/ATA disks", cmd_disks },
     { "sector", "<hdN> <lba>",   "hex dump a disk sector", cmd_sector },

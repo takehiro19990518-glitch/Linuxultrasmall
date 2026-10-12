@@ -637,33 +637,67 @@ static int try_mount(struct ata_device *d, u32 start, u32 sectors)
     return E_OK;
 }
 
-int fs_mount_auto(void)
+/* Whole-disk P5FS, else the first valid type 0x7F MBR partition. */
+static int mount_device(struct ata_device *d)
 {
     u8 mbr[P5FS_BLOCK];
-    for (u32 i = 0; i < ATA_MAX_DEVICES; i++) {
-        struct ata_device *d = ata_get(i);
-        if (!d)
+    int rc = try_mount(d, 0, d->sectors);
+    if (rc != E_NODEV)
+        return rc;
+    rc = ata_read(d, 0, 1, mbr);
+    if (rc)
+        return rc;
+    if (mbr[MBR_SIG_OFFSET] != 0x55 || mbr[MBR_SIG_OFFSET + 1] != 0xAA)
+        return E_NODEV;
+    for (u32 p = 0; p < MBR_PART_ENTRIES; p++) {
+        const u8 *e = mbr + MBR_PART_OFFSET + p * MBR_PART_SIZE;
+        u32 start, size;
+        memcpy(&start, e + 8, 4);
+        memcpy(&size, e + 12, 4);
+        if (e[4] != P5FS_PART_TYPE || !start || !size || start >= d->sectors ||
+            size > d->sectors - start)
             continue;
-        int rc = try_mount(d, 0, d->sectors);         /* whole-disk P5FS */
+        rc = try_mount(d, start, size);
         if (rc == E_OK)
             return E_OK;
-        if (ata_read(d, 0, 1, mbr))
-            continue;
-        if (mbr[MBR_SIG_OFFSET] != 0x55 || mbr[MBR_SIG_OFFSET + 1] != 0xAA)
-            continue;
-        for (u32 p = 0; p < MBR_PART_ENTRIES; p++) {
-            const u8 *e = mbr + MBR_PART_OFFSET + p * MBR_PART_SIZE;
-            u32 start, size;
-            memcpy(&start, e + 8, 4);
-            memcpy(&size, e + 12, 4);
-            if (e[4] != P5FS_PART_TYPE || !start || !size || start >= d->sectors ||
-                size > d->sectors - start)
-                continue;
-            if (try_mount(d, start, size) == E_OK)
-                return E_OK;
-        }
     }
     return E_NODEV;
+}
+
+int fs_mount_auto(void)
+{
+    for (u32 i = 0; i < ATA_MAX_DEVICES; i++) {
+        struct ata_device *d = ata_get(i);
+        if (d && mount_device(d) == E_OK)
+            return E_OK;
+    }
+    return E_NODEV;
+}
+
+/* Switch to the file system on device 'name'.  The current one stays
+ * mounted if the new one cannot be mounted. */
+int fs_mount(const char *name)
+{
+    struct ata_device *d = ata_find(name);
+    if (!d)
+        return E_NODEV;
+    if (fs.mounted) {
+        int rc = bm_flush();            /* normally a no-op: write-through */
+        if (rc)
+            return rc;
+    }
+    typeof(fs) saved = fs;
+    fs.mounted = false;
+    int rc = mount_device(d);
+    if (rc) {
+        fs = saved;
+        return rc;
+    }
+    if (saved.mounted) {
+        kfree(saved.bitmap);
+        kfree(saved.dirty);
+    }
+    return E_OK;
 }
 
 bool fs_is_mounted(void) { return fs.mounted; }

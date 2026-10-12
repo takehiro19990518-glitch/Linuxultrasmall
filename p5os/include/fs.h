@@ -25,6 +25,7 @@ struct fs_info {
 typedef bool (*fs_list_cb)(const struct fs_entry *e, void *ctx);   /* false = stop */
 
 int fs_mount_auto(void);
+int fs_mount(const char *device);       /* "hd0".."hd3" */
 bool fs_is_mounted(void);
 const char *fs_cwd(void);               /* NULL when nothing is mounted */
 int fs_chdir(const char *path);

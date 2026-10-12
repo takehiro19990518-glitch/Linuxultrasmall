@@ -49,6 +49,7 @@ SMAP              equ 0x534D4150        ; 'SMAP'
 
 A20_TEST_ADDR     equ 0x0500
 READ_RETRIES      equ 3
+MIN_EXT_KB        equ 512               ; kernel + page tables + minimal heap
 KBC_TIMEOUT       equ 0xFFFF
 
 CODE_SEL          equ 0x08
@@ -109,6 +110,7 @@ stage2_main:
     call check_cpu
     call detect_geometry
     call detect_memory
+    call check_min_memory
     call enable_a20
     call load_kernel
 
@@ -311,6 +313,43 @@ detect_memory:
 .no_mem:
     mov si, msg_err_mem
     jmp fatal
+
+; =============================================================================
+; check_min_memory: the kernel runs at 1 MB and needs RAM above it.
+; Require usable memory covering 0x100000 .. 0x100000 + MIN_EXT_KB KB.
+; =============================================================================
+check_min_memory:
+    cmp byte [BOOTINFO_ADDR + BI_MEM_METHOD], MEM_E820
+    jne .ext_kb
+    mov si, E820_BUF
+    mov cx, [BOOTINFO_ADDR + BI_E820_COUNT]
+.next:
+    cmp dword [si + 16], 1              ; type usable?
+    jne .skip
+    cmp dword [si + 4], 0               ; base below 4 GB
+    jne .skip
+    mov eax, [si]
+    cmp eax, 0x100000
+    ja .skip                            ; must start at or below 1 MB
+    mov edx, [si + 12]                  ; length >= 4 GB: certainly enough
+    test edx, edx
+    jnz .ok
+    add eax, [si + 8]                   ; end address
+    jc .ok
+    cmp eax, 0x100000 + MIN_EXT_KB * 1024
+    jae .ok
+.skip:
+    add si, E820_ENTRY_SIZE
+    loop .next
+    jmp .too_small
+.ext_kb:
+    cmp dword [BOOTINFO_ADDR + BI_EXT_KB_LOW], MIN_EXT_KB
+    jae .ok
+.too_small:
+    mov si, msg_err_minmem
+    jmp fatal
+.ok:
+    ret
 
 ; =============================================================================
 ; enable_a20: try each method in turn, verifying after each one
@@ -700,6 +739,7 @@ msg_pmode       db "Entering protected mode", 13, 10, 0
 msg_crlf        db 13, 10, 0
 msg_err_cpu     db "BOOT ERROR: a 32-bit (386 or later) CPU is required", 0
 msg_err_mem     db "BOOT ERROR: cannot determine memory size", 0
+msg_err_minmem  db "BOOT ERROR: P5OS needs at least 512 KB of RAM above 1 MB", 0
 msg_err_a20     db "BOOT ERROR: A20 gate could not be enabled", 0
 msg_err_lowmem  db "BOOT ERROR: not enough conventional memory for kernel", 0
 msg_err_chs     db 13, 10, "BOOT ERROR: kernel beyond CHS limit", 0

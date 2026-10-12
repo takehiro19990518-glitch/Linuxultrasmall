@@ -19,6 +19,17 @@
 
 void kmain(u32 magic, const struct bootinfo *bi);
 
+#define FDC_DOR             0x3F2   /* floppy digital output register */
+#define FDC_DOR_MOTORS_OFF  0x0C    /* controller enabled, DMA on, all motors off */
+
+/* The BIOS switches the floppy motor off from its IRQ 0 handler a few
+ * seconds after the last access.  P5OS replaces that handler, so after a
+ * floppy boot the motor would never stop on real hardware. */
+static void floppy_motor_off(void)
+{
+    outb(FDC_DOR, FDC_DOR_MOTORS_OFF);
+}
+
 static void banner(void)
 {
     console_set_attr(ATTR_BRIGHT);
@@ -46,6 +57,7 @@ void kmain(u32 magic, const struct bootinfo *bi)
              serial ? "COM1" : "absent");
 
     memmap_init(bi);                    /* copy boot data before page 0 is unmapped */
+    floppy_motor_off();
     gdt_init();
     idt_init();
     pic_init();
