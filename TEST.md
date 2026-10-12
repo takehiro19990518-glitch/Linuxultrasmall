@@ -27,3 +27,24 @@ QEMU 設定: `qemu-system-i386 -cpu pentium3 -vga std`、IDE HDD + IDE CD-ROM、
 - **QEMU で確認済み。Pentium III 実機では未確認。**
 - QEMU の `pentium3` CPU モデルは命令セットのみ再現し、速度は再現しません（ホスト上で高速に動作）。
   実機（450MHz〜1.4GHz）ではデスクトップ表示までの時間はより長くなる見込みです。
+
+## ハードウェア対応テスト（ドライバ自動読み込み）
+
+QEMU で当時の機器を模擬し、udev によるドライバ自動読み込み・音の再生・LAN・X の起動を確認。
+
+| 構成 | LAN | サウンド | 画面 | 結果 |
+|---|---|---|---|---|
+| A: 64MB | RTL8139 (8139too) | Ensoniq ES1370 (snd_ens1370) | std VGA (KMS) | 23/23 PASS、再生OK |
+| B: 128MB | AMD PCnet (pcnet32) | Intel AC'97 (snd_intel8x0) | ATI Rage128 Pro | 23/24。r128 は QEMU のモニタ検出非対応で失敗 → 自動フォールバックで X 起動 |
+| C: 128MB | NE2000 PCI (ne2k_pci) | Sound Blaster 16 ISA (snd_sb16、0x220 自動プローブ) | Cirrus (KMS) | 23/23 PASS、再生OK |
+| D: 256MB | Intel 82559 (e100) | — | std VGA | 20/20 PASS（USB キーボード・マウス接続） |
+
+### X の起動方式（実機向けの対策）
+- グラフィックカードの PCI ベンダーから X ドライバを選び、失敗したら次へ自動で切り替える：
+  KMS(modesetting) → カード専用ドライバ(r128/mach64/mga/savage/tdfx/neomagic/siliconmotion/cirrus) → 自動検出 → vesa → fbdev
+- 標準起動ではカーネルの VESA フレームバッファを使わない（X の vesa ドライバがフレームバッファ存在時に動作を拒否するため）
+- モニタの EDID が取れない場合は当時の CRT に安全な同期範囲（31.5–57kHz / 50–75Hz）を使用
+
+### 静的チェック（scripts/check-image.sh）
+- 全 ELF（カーネルモジュール 378 個を含む）が 32bit i386
+- Pentium III で実行されるコードに SSE2 以降の命令なし（例外: libjpeg-turbo は実行時 CPU 判定、libgcc の _Float16 補助関数は未使用）

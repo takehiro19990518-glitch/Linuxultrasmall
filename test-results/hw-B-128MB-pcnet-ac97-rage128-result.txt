@@ -1,0 +1,24 @@
+PASS 1. BIOS boot from ISO (SYSLINUX) 
+PASS 2. Linux kernel boot 6.12.111
+PASS 3. root filesystem mount (CD + squashfs + overlay) 
+PASS 4. init (BusyBox init + rc scripts) 
+PASS 5. X.Org start 
+PASS 6. GUI desktop (fluxbox + start menu) 27s after power-on
+PASS    desktop processes (Xorg fluxbox p3-start p3-sysinfo) 199 204 207 208
+PASS 7. keyboard (Ctrl+Alt+T opens terminal) attempt 1
+PASS 9. terminal (xterm accepts typed command) 
+PASS 8. mouse (PS/2 mouse device in X, pointer injected) 21 log lines
+PASS 10. file manager (p3-files) 
+PASS 11. text editor (p3-edit) 
+PASS    kernel modules loaded automatically lsmod | sed 1d | cut -d' ' -f1 | sort | tr '\n' ' '; echo __END96553__$? ac97_bus floppy i2c_piix4 i2c_smbus mii parport parport_pc pcnet32 pcspkr ppdev snd snd_ac97_codec snd_intel8x0 snd_pcm snd_timer soundcore
+PASS    driver loaded: pcnet32 
+PASS    driver loaded: snd_intel8x0 
+PASS    sound card detected 0 [I82801AAICH ]: ICH - Intel 82801AA-ICH Intel 82801AA-ICH with STAC9700,83,84 at irq 11
+PASS    sound playback (aplay) 
+FAIL    X video driver in use: r128 0 log lines
+PASS    stress: 9 windows open at once (4 xterm, 2 files, 2 edit, sysinfo) 8 app processes
+PASS    memory after stress (total used free shared buff avail) Mem: 114 27 20 1 67 81 / Swap: 0 0 0
+PASS    no out-of-memory kills 0 OOM events
+PASS    network (DHCP + ping gateway) 
+PASS 13. reboot (system comes back) 
+PASS 12. shutdown (poweroff turns the VM off) 
