@@ -34,3 +34,8 @@ HOST_XAPP_MKFONTSCALE_POST_INSTALL_HOOKS += P3_HOST_MKFONTDIR_WRAPPER
 # (the toolchain wrapper's -z now comes first; the last -z option wins).
 P3_LAZY_PKGS = $(addprefix XDRIVER_XF86_VIDEO_,$(P3_XVIDEO))
 $(foreach p,$(P3_LAZY_PKGS),$(eval $(p)_CONF_ENV += LDFLAGS="$$(TARGET_LDFLAGS) -Wl,-z,lazy"))
+
+# Dillo 3.0.5 (Ubuntu archive version): relax GCC 15 template checks and use
+# its own name for the TLS option (Buildroot's dillo.mk targets 3.3)
+DILLO_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -Wno-template-body -fpermissive"
+DILLO_CONF_OPTS += --enable-ssl
