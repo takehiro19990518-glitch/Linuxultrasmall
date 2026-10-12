@@ -95,7 +95,6 @@ usbutils         usbutils
 wireless-regdb   wireless-regdb
 wireless_tools   wireless-tools
 wpa_supplicant   wpa
-xdriver_xf86-input-synaptics    xserver-xorg-input-synaptics
 xdriver_xf86-video-cirrus       xserver-xorg-video-cirrus
 xdriver_xf86-video-mach64       xserver-xorg-video-mach64
 xdriver_xf86-video-mga          xserver-xorg-video-mga

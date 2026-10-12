@@ -25,5 +25,5 @@ HOST_XAPP_MKFONTSCALE_POST_INSTALL_HOOKS += P3_HOST_MKFONTDIR_WRAPPER
 # X.Org video drivers reference symbols of sub-modules (int10/vbe, fbdevhw,
 # vgahw) that the server loads only later, so link them with -z lazy
 # (the toolchain wrapper's -z now comes first; the last -z option wins).
-P3_LAZY_PKGS = $(addprefix XDRIVER_XF86_VIDEO_,$(P3_XVIDEO)) XDRIVER_XF86_INPUT_SYNAPTICS
+P3_LAZY_PKGS = $(addprefix XDRIVER_XF86_VIDEO_,$(P3_XVIDEO))
 $(foreach p,$(P3_LAZY_PKGS),$(eval $(p)_CONF_ENV += LDFLAGS="$$(TARGET_LDFLAGS) -Wl,-z,lazy"))
