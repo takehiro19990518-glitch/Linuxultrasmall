@@ -156,7 +156,7 @@ def main():
         check("5. X.Org start", bool(x and x.group(1) == "STARTED"))
         d = S.expect(r"P3LINUX: DESKTOP READY", 300)
         check("6. GUI desktop (fluxbox + start menu)", d is not None, f"{time.time() - t0:.0f}s after power-on")
-        time.sleep(8)
+        time.sleep(15)
         shot("01-desktop")
         # serial root login for inspection
         S.send("\n")
@@ -169,11 +169,15 @@ def main():
         _, out = sh("pidof Xorg fluxbox p3-start p3-sysinfo")
         check("   desktop processes (Xorg fluxbox p3-start p3-sysinfo)", len(out.split()) >= 3, out.strip())
         # 7. keyboard: Ctrl+Alt+T is bound to xterm in fluxbox
-        sh("pkill p3-sysinfo")
-        mon("sendkey ctrl-alt-t")
-        time.sleep(6)
-        rc, _ = sh("pidof xterm")
-        check("7. keyboard (Ctrl+Alt+T opens terminal)", rc == 0)
+        sh("killall p3-sysinfo")
+        tries = 0
+        for tries in range(1, 4):  # emulated key injection can drop modifiers
+            mon("sendkey ctrl-alt-t", )
+            time.sleep(8)
+            rc, _ = sh("pidof xterm")
+            if rc == 0:
+                break
+        check("7. keyboard (Ctrl+Alt+T opens terminal)", rc == 0, f"attempt {tries}")
         # type into the terminal to prove it accepts input
         for k in "touch /tmp/kbd-ok".replace(" ", "\x00"):
             mon("sendkey " + ({"\x00": "spc", "/": "slash", "-": "minus", ".": "dot"}.get(k, k)))
@@ -205,8 +209,19 @@ def main():
         sh("(p3-sysinfo &)")
         time.sleep(3)
         shot("05-sysinfo")
-        _, out = sh("free -m | sed -n 2p")
-        check("   memory in use after desktop start", True, out.strip().splitlines()[0] if out.strip() else "")
+        # stress: 5 more applications (9 windows in total)
+        sh("(xterm &); (xterm &); (xterm &); (p3-files / &); (p3-edit &)")
+        time.sleep(20)
+        _, out = sh("pidof xterm p3-files p3-edit | wc -w")
+        n = out.strip().splitlines()[-1] if out.strip() else "0"
+        check("   stress: 9 windows open at once (4 xterm, 2 files, 2 edit, sysinfo)", n.isdigit() and int(n) >= 8, f"{n} app processes")
+        shot("06-stress")
+        _, out = sh("free -m | grep -E '^(Mem|Swap):' | tr -s ' '")
+        mem = " / ".join(l.strip() for l in out.splitlines() if l.startswith(("Mem", "Swap")))
+        check("   memory after stress (total used free shared buff avail)", True, mem)
+        rc, out = sh("dmesg | grep -ciE 'out of memory|oom-kill|killed process'")
+        n = out.strip().splitlines()[-1] if out.strip() else "?"
+        check("   no out-of-memory kills", n == "0", f"{n} OOM events")
         # network
         rc, _ = sh("ifconfig eth0 | grep -q 'inet addr' || udhcpc -i eth0 -n -q -t 5", 40)
         rc, out = sh("ping -c 2 -W 3 10.0.2.2", 20)
@@ -214,7 +229,7 @@ def main():
         # 13. reboot
         S.buf = ""
         sh("reboot", 5)
-        ok = S.expect(r"(ISO|SYS)LINUX \d", 180) is not None
+        ok = S.expect(r"P3 Linux: kernel" if os.environ.get("P3_APPEND") else r"(ISO|SYS)LINUX \d", 180) is not None
         check("13. reboot (system comes back)", ok)
         d = S.expect(r"P3LINUX: DESKTOP READY", tmo)
         # 12. shutdown

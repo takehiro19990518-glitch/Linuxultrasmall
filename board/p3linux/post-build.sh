@@ -23,5 +23,14 @@ for g in input:x:101: kvm:x:102: sgx:x:103: render:x:104:; do
   grep -q "^${g%%:*}:" "$T/etc/group" || echo "$g" >> "$T/etc/group"
 done
 mkdir -p "$T/mnt/cdrom" "$T/mnt/hd" "$T/mnt/floppy"
+# Pre-generate the fontconfig cache (i386 format) so applications do not
+# scan the fonts - costing time and memory - on every start.  The target
+# fc-cache is run under qemu-user (host package qemu-user).
+if command -v qemu-i386 >/dev/null; then
+  mkdir -p "$T/var/cache/fontconfig"
+  qemu-i386 -L "$T" "$T/usr/bin/fc-cache" --sysroot="$T" -f -s || echo "WARNING: fc-cache failed"
+else
+  echo "WARNING: qemu-i386 not found; fontconfig cache not pre-generated"
+fi
 # docs / man pages are useless on a 64MB machine
 rm -rf "$T/usr/share/man" "$T/usr/share/doc" "$T/usr/share/info"
