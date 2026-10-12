@@ -50,3 +50,10 @@ MUPDF_MAKE_OPTS += USE_SYSTEM_LCMS2=yes XCFLAGS="$(TARGET_CFLAGS) -DFZ_ENABLE_IC
 
 # p7zip 16.02 (Ubuntu archive) has C++11 narrowing conversions
 $(P7ZIP_TARGET_BUILD): TARGET_CXXFLAGS += -Wno-narrowing
+
+# rsync (Ubuntu archive) ships without the bundled zlib/popt; the system
+# libraries are used, configure only needs the placeholder files
+define P3_RSYNC_PLACEHOLDERS
+	for d in zlib popt; do mkdir -p $(@D)/$$d; [ -f $(@D)/$$d/dummy.in ] || : > $(@D)/$$d/dummy.in; done
+endef
+RSYNC_POST_PATCH_HOOKS += P3_RSYNC_PLACEHOLDERS
