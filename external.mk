@@ -46,4 +46,4 @@ DILLO_CONF_OPTS += --enable-ssl
 
 # MuPDF from the Ubuntu archive is "+ds" (bundled lcms2mt fork removed):
 # build without ICC colour management, against the system libraries.
-MUPDF_MAKE_OPTS += USE_SYSTEM_LCMS2=yes XCFLAGS="$(TARGET_CFLAGS) -DFZ_ENABLE_ICC=0"
+MUPDF_MAKE_OPTS += USE_SYSTEM_LCMS2=yes XCFLAGS="$(TARGET_CFLAGS) -DFZ_ENABLE_ICC=0 -DFZ_ENABLE_JS=0" USE_SYSTEM_MUJS=yes SYS_MUJS_CFLAGS= SYS_MUJS_LIBS=
