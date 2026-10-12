@@ -25,6 +25,7 @@ CFLAGS  := -m32 -march=pentium -mtune=pentium -std=gnu11 -O2 -g \
            -mgeneral-regs-only -mno-red-zone \
            -Wall -Wextra -Wshadow -Wstrict-prototypes -Wmissing-prototypes \
            -Wno-unused-parameter -Iinclude
+CFLAGS  += $(EXTRA_CFLAGS)          # e.g. EXTRA_CFLAGS=-DATA_FORCE_CHS
 ifeq ($(WERROR),1)
 CFLAGS  += -Werror
 endif

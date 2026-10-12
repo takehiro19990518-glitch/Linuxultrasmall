@@ -46,6 +46,17 @@
 #define CMD_WRITE       0x30    /* WRITE SECTORS */
 #define CMD_FLUSH       0xE7    /* FLUSH CACHE (ATA-4+, may be aborted) */
 #define CMD_IDENTIFY    0xEC
+#define CMD_INIT_PARAMS 0x91    /* INITIALIZE DEVICE PARAMETERS (CHS geometry) */
+
+/* IDENTIFY words */
+#define ID_CAP_LBA          (1u << 9)       /* word 49 */
+#define ID_MAJOR_ATA5       (1u << 5)       /* word 80: ATA-5 supported */
+#define ID_83_VALID_MASK    0xC000          /* word 83 bits 15:14 == 01 */
+#define ID_83_VALID         0x4000
+#define ID_83_FLUSH         (1u << 12)
+#define STATUS_NO_DEVICE_1  0xFF            /* floating bus */
+#define STATUS_NO_DEVICE_2  0x7F
+#define TIMEOUT_SELECT_MS   1000
 
 #define TIMEOUT_RESET_MS    5000
 #define TIMEOUT_CMD_MS      5000
@@ -128,6 +139,12 @@ static bool identify(struct ata_device *d)
 {
     u16 id[256];
     select_drive(d, 0);
+    u8 st0 = inb(d->io + REG_STATUS);
+    if (st0 == STATUS_NO_DEVICE_1 || st0 == STATUS_NO_DEVICE_2)
+        return false;
+    /* a slave may still be finishing its power-on diagnostics */
+    if (wait_not_busy(d->io, TIMEOUT_SELECT_MS) < 0)
+        return false;
     outb(d->io + REG_SECCOUNT, 0);
     outb(d->io + REG_LBA0, 0);
     outb(d->io + REG_LBA1, 0);
@@ -151,17 +168,45 @@ static bool identify(struct ata_device *d)
     d->cylinders = id[1];
     d->heads = id[3];
     d->spt = id[6];
-    d->lba = (id[49] & (1 << 9)) != 0;
     u32 lba_sectors = id[60] | ((u32)id[61] << 16);
+    /* some early drives claim LBA but report 0 LBA sectors: use CHS then */
+    d->lba = (id[49] & ID_CAP_LBA) && lba_sectors;
+#ifdef ATA_FORCE_CHS                        /* test build: exercise the CHS path */
+    d->lba = false;
+#endif
     d->sectors = d->lba ? lba_sectors : (u32)d->cylinders * d->heads * d->spt;
     if (d->sectors > LBA28_LIMIT)
         d->sectors = LBA28_LIMIT;           /* LBA48 not implemented */
     copy_string(d->model, &id[27], 20);
     copy_string(d->serial, &id[10], 10);
-    d->flush_supported = true;              /* cleared if the drive aborts it */
+    /* FLUSH CACHE only where IDENTIFY says it exists: older drives may hang
+     * or misreport on the unknown opcode.  (Also cleared on ABRT.) */
+    bool w83_valid = (id[83] & ID_83_VALID_MASK) == ID_83_VALID;
+    d->flush_supported = (w83_valid && (id[83] & ID_83_FLUSH)) ||
+                         (id[80] != 0xFFFF && (id[80] & ID_MAJOR_ATA5));
     if (!d->sectors || (!d->lba && (!d->heads || !d->spt)))
         return false;
     return true;
+}
+
+/* For CHS-only drives, program the translation we use (IDENTIFY words
+ * 1/3/6).  The BIOS may have set a different one; as long as P5OS always
+ * uses the geometry it set, sector addresses are consistent.  Must be
+ * repeated after every reset. */
+static void set_chs_geometry(struct ata_device *d)
+{
+    if (d->lba || !d->heads || !d->spt)
+        return;
+    if (wait_not_busy(d->io, TIMEOUT_CMD_MS) < 0)
+        return;
+    select_drive(d, (u8)((d->heads - 1) & 0x0F));
+    outb(d->io + REG_SECCOUNT, (u8)d->spt);
+    outb(d->io + REG_COMMAND, CMD_INIT_PARAMS);
+    delay400(d->ctrl);
+    int st = wait_not_busy(d->io, TIMEOUT_CMD_MS);
+    if (st < 0 || (st & ST_ERR))
+        LOG_WARN("ata %s: INITIALIZE DEVICE PARAMETERS failed (status %02x)", d->name,
+                 st < 0 ? 0xFF : st);
 }
 
 static void reset_channel(u32 ch)
@@ -173,6 +218,9 @@ static void reset_channel(u32 ch)
     timer_sleep_ms(2);
     if (wait_not_busy(chan_io[ch], TIMEOUT_RESET_MS) < 0)
         LOG_WARN("ata: channel %u stays busy after reset", ch);
+    for (u32 dr = 0; dr < 2; dr++)
+        if (devs[ch * 2 + dr].present)
+            set_chs_geometry(&devs[ch * 2 + dr]);
 }
 
 int ata_init(void)
@@ -197,6 +245,7 @@ int ata_init(void)
             d->name[2] = (char)('0' + ch * 2 + dr);
             if (identify(d)) {
                 d->present = true;
+                set_chs_geometry(d);
                 found++;
                 LOG_INFO("ata %s: \"%s\" %u sectors (%u MB), %s, CHS %u/%u/%u",
                          d->name, d->model, d->sectors, d->sectors / 2048,

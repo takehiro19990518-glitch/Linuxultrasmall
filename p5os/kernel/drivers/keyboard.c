@@ -51,7 +51,7 @@ static const char map_shift[128] = {
 static volatile int kbuf[BUF_SIZE];
 static volatile u32 khead, ktail;
 static u32 dropped;
-static bool shift_l, shift_r, ctrl, alt, caps, extended;
+static bool shift_l, shift_r, ctrl_l, ctrl_r, alt_l, alt_r, caps, extended;
 
 static void push_key(int k)
 {
@@ -101,12 +101,13 @@ static void kbd_irq(struct int_frame *f)
     switch (code) {                 /* modifiers (left and right variants) */
     case SC_LSHIFT: if (!ext) shift_l = !release; return;
     case SC_RSHIFT: shift_r = !release; return;
-    case SC_CTRL:   ctrl = !release; return;
-    case SC_ALT:    alt = !release; return;
+    case SC_CTRL:   if (ext) ctrl_r = !release; else ctrl_l = !release; return;
+    case SC_ALT:    if (ext) alt_r = !release; else alt_l = !release; return;
     default: break;
     }
     if (release)
         return;
+    bool ctrl = ctrl_l || ctrl_r, alt = alt_l || alt_r;
     if (code == SC_CAPS) {
         caps = !caps;
         return;

@@ -125,8 +125,8 @@ make distclean  # images/ も削除
 `make` の最後に次のような検査結果が出ます:
 
 ```
-check-isa: OK (13908 instructions, none beyond the P5 instruction set)
-kernel: image 53144 bytes (104 sectors), bss 45056 bytes, memory 0x100000-0x118000 (96 KB)
+check-isa: OK (14166 instructions, none beyond the P5 instruction set)
+kernel: image 54168 bytes (106 sectors), bss 45056 bytes, memory 0x100000-0x119000 (100 KB)
 ```
 
 ---
@@ -229,12 +229,12 @@ qemu-system-i386 -cpu pentium,model=1,stepping=7,-mmx,-apic -m 16 \
 | 0x00001000 | E820 マップ（同上） |
 | 0x00010000–0x0009FBFF | 起動時はカーネル仮置き場、起動後は空きページとして再利用 |
 | 0x000A0000–0x000FFFFF | VGA メモリ・BIOS ROM（キャッシュ無効でマップ） |
-| 0x00100000–0x00117FFF | カーネル 96 KB（コード+データ 52 KB, BSS 44 KB; スタック 16 KB と直下の**ガードページ**を含む） |
-| 0x00118000– | カーネルヒープ 1 MB（RAM が少ない場合は空きの 1/4 に縮小、最低 64 KB） |
+| 0x00100000–0x00118FFF | カーネル 100 KB（コード+データ 53 KB, BSS 44 KB; スタック 16 KB と直下の**ガードページ**を含む） |
+| 0x00119000– | カーネルヒープ 1 MB（RAM が少ない場合は空きの 1/4 に縮小、最低 64 KB） |
 | 以降 | 物理ページアロケータの空き領域 |
 | 0x00FE0000–0x00FFFFFF | BIOS 予約（E820 で除外） |
 
-起動直後の使用量（16 MB 時）: カーネル 96 KB + ページテーブル 20 KB + ヒープ 1 MB ≒ 1.2 MB、
+起動直後の使用量（16 MB 時）: カーネル 100 KB + ページテーブル 20 KB + ヒープ 1 MB ≒ 1.2 MB、
 空き 14,664 KB。`mem` で常時確認できます。
 
 * **物理ページ管理** (`mm/pmm.c`): 4 KB 単位のビットマップ（64 MB 分 2 KB）。E820 の usable 領域だけを
@@ -341,10 +341,16 @@ python3 tests/run_tests.py -k fs    # 名前に fs を含むテストだけ
 
 **検証範囲**
 * 動作確認は QEMU 8.2.2 (TCG) の `pentium` モデル（および model=1/-mmx/-apic 指定）、`pc`(i440FX) と
-  `isapc` マシン、SeaBIOS のみ。**実機・他の BIOS では未検証**です。QEMU は P5 の実行速度や
+  `isapc` マシン、SeaBIOS のみ。LBA 非対応ドライブ向けの CHS 経路は QEMU では通常通らないため、
+  `make EXTRA_CFLAGS=-DATA_FORCE_CHS` で CHS を強制したビルドを作り、`disktest` とホスト側検証で確認しました。**実機・他の BIOS では未検証**です。QEMU は P5 の実行速度や
   タイミング、FDIV/F00F 等のエラッタ、古い IDE ドライブの癖（スピンアップ時間、LBA 非対応など）を
   再現しません。60 MHz と 66 MHz の違いはカーネルの動作に影響しない設計（時間計測は PIT 基準、
   CPU クロック依存のループ無し）ですが、実機では確認していません。
+* 実機の古い BIOS / ハードウェアを想定して、次の点を明示的に扱っています（いずれも QEMU では
+  差が出ないため、コードレビューで確認したものです）: 8042 経由の A20 有効化で残留スキャンコードを
+  捨て、リセット線 (bit0) を必ず 1 に保つ / INT 12h・E801 の戻り値の妥当性確認 / ポート 0x70 を読まない /
+  CHS 専用ドライブへの INITIALIZE DEVICE PARAMETERS 発行 / IDENTIFY が対応を示す場合だけ FLUSH CACHE /
+  inode 書込でエラーが報告されても実際に書かれていた場合に二重所有を起こさない処理 / フロッピーモーター停止。
 * `-cpu pentium` の CPUID は model 4 (P55C) 扱い。P5 (model 1) 表示はオプション指定時のみ確認。
 
 **未実装・制限**

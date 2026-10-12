@@ -263,12 +263,31 @@ static int inode_set_data(u32 ino, struct p5fs_inode *n, const void *data, u32 l
     }
     if (!rc)
         rc = bm_flush();            /* new blocks are now "used" on disk */
-    if (!rc)
-        rc = iwrite(ino, &nn);      /* the switch-over point */
-    if (rc) {
+    if (rc) {                       /* inode untouched: undo the allocation */
         release_blocks(new_list, need);
         bm_flush();
         return rc;
+    }
+    rc = iwrite(ino, &nn);          /* the switch-over point */
+    if (rc) {
+        /* The write may have reached the disk even though an error was
+         * reported (e.g. a failed cache flush).  Only give the new blocks
+         * back if the inode provably still points at the old ones;
+         * otherwise leaking them is the safe choice. */
+        struct p5fs_inode cur;
+        if (iread(ino, &cur) == E_OK && !memcmp(&cur, &nn, sizeof(nn))) {
+            LOG_WARN("p5fs: inode %u write reported %s but data is on disk", ino,
+                     strerror(rc));
+            rc = E_OK;              /* switch-over did happen: continue */
+        } else if (iread(ino, &cur) == E_OK && !memcmp(&cur, n, sizeof(cur))) {
+            release_blocks(new_list, need);
+            bm_flush();
+            return rc;
+        } else {
+            LOG_ERR("p5fs: inode %u state unknown after %s; %u block(s) kept allocated",
+                    ino, strerror(rc), need);
+            return rc;
+        }
     }
     *n = nn;
     release_blocks(old_list, old_cnt);
@@ -427,9 +446,10 @@ static int normalize(const char *path, char *out)
     char tmp[FS_PATH_MAX * 2];
     if (!path || !*path)
         return E_INVAL;
-    if (path[0] == '/')
-        strlcpy(tmp, path, sizeof(tmp));
-    else {
+    if (path[0] == '/') {
+        if (strlcpy(tmp, path, sizeof(tmp)) >= sizeof(tmp))
+            return E_NAMETOOLONG;
+    } else {
         strlcpy(tmp, fs.cwd, sizeof(tmp));
         strlcat(tmp, "/", sizeof(tmp));
         if (strlcat(tmp, path, sizeof(tmp)) >= sizeof(tmp))

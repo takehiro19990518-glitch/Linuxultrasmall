@@ -132,9 +132,8 @@ stage2_main:
     mov al, 0xFF                        ; mask every IRQ on both 8259 PICs;
     out 0xA1, al                        ; the kernel reprograms them later
     out 0x21, al
-    in al, 0x70                         ; disable NMI until the kernel has an IDT
-    or al, 0x80
-    out 0x70, al
+    mov al, 0x80                        ; disable NMI until the kernel has an IDT
+    out 0x70, al                        ; (port 0x70 is write-only on many boards)
 
     lgdt [gdt_desc]
     mov eax, cr0
@@ -224,12 +223,8 @@ detect_geometry:
 ; =============================================================================
 detect_memory:
     ; conventional memory size in KB (normally 639 or 640)
-    int 0x12
-    jc .no_int12
+    int 0x12                            ; (INT 12h has no error indication)
     mov [BOOTINFO_ADDR + BI_LOWMEM_KB], ax
-    jmp .e820
-.no_int12:
-    mov word [BOOTINFO_ADDR + BI_LOWMEM_KB], 0
 
 .e820:
     xor ebx, ebx
@@ -274,6 +269,7 @@ detect_memory:
     ret
 
 .e801:
+    xor bx, bx
     xor cx, cx
     xor dx, dx
     mov ax, 0xE801
@@ -287,6 +283,8 @@ detect_memory:
     mov ax, cx
     mov bx, dx
 .e801_use_ax:
+    cmp ax, 0x3C00                      ; > 15 MB below 16 MB is impossible:
+    ja .m88                             ; BIOS did not really fill the regs
     movzx eax, ax
     mov [BOOTINFO_ADDR + BI_EXT_KB_LOW], eax    ; KB between 1 MB and 16 MB
     movzx ebx, bx
@@ -439,10 +437,12 @@ a20_kbc:
     call kbc_wait_input
     mov al, 0xAD                        ; disable keyboard interface
     out 0x64, al
-    call kbc_wait_input
+    call kbc_drain                      ; drop stale scancodes: they must not be
+    call kbc_wait_input                 ; mistaken for the output port value
     mov al, 0xD0                        ; read controller output port
     out 0x64, al
     call kbc_wait_output
+    jc .restore                         ; no answer: leave the port alone
     in al, 0x60
     push ax
     call kbc_wait_input
@@ -450,13 +450,25 @@ a20_kbc:
     out 0x64, al
     call kbc_wait_input
     pop ax
-    or al, 0x02                         ; bit 1 = A20 gate
-    out 0x60, al
+    or al, 0x03                         ; bit 1 = A20 gate, bit 0 = reset line
+    out 0x60, al                        ; (active low: must stay 1!)
     call kbc_wait_input
+.restore:
     mov al, 0xAE                        ; re-enable keyboard interface
     out 0x64, al
     call kbc_wait_input
     sti
+    ret
+
+kbc_drain:                              ; read port 0x60 until the buffer is empty
+    push cx
+    mov cx, 16
+.l: in al, 0x64
+    test al, 0x01
+    jz .d
+    in al, 0x60
+    loop .l
+.d: pop cx
     ret
 
 kbc_wait_input:                         ; wait until input buffer empty
@@ -470,13 +482,17 @@ kbc_wait_input:                         ; wait until input buffer empty
     ret
 
 kbc_wait_output:                        ; wait until output buffer full
-    push cx
+    push cx                             ; returns CF=1 on timeout
     mov cx, KBC_TIMEOUT
 .l: in al, 0x64
     test al, 0x01
     jnz .d
     loop .l
+    pop cx
+    stc
+    ret
 .d: pop cx
+    clc
     ret
 
 ; =============================================================================

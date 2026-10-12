@@ -77,7 +77,7 @@ void idt_init(void)
     __asm__ volatile("lidt %0" :: "m"(p));
 
     /* stage 2 disabled NMI in the CMOS index port; turn it back on */
-    outb(0x70, inb(0x70) & 0x7F);
+    outb(0x70, 0x00);   /* bit 7 clear; port 0x70 is not readable everywhere */
 }
 
 void irq_register(u32 irq, irq_handler_t h)
