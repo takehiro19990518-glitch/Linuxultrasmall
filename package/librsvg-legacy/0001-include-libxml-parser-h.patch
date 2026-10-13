@@ -1,0 +1,16 @@
+Include <libxml/parser.h> explicitly: libxml2 >= 2.12 no longer pulls it
+in through <libxml/SAX.h>.
+
+Upstream-Status: Inappropriate [librsvg 2.40 is no longer maintained]
+Signed-off-by: P3 Linux
+
+--- a/rsvg-private.h
++++ b/rsvg-private.h
+@@ -33,6 +33,7 @@
+ 
+ #include <libxml/SAX.h>
+ #include <libxml/xmlmemory.h>
++#include <libxml/parser.h>
+ #include <pango/pango.h>
+ #include <glib.h>
+ #include <glib-object.h>
