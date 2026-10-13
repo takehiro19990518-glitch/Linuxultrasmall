@@ -1,0 +1,4 @@
+Item,Price,Qty,Total
+CPU Pentium III,120,1,=B2*C2
+Memory 128MB,40,2,=B3*C3
+Sum,,,=SUM(D2:D3)

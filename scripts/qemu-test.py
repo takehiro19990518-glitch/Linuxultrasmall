@@ -239,12 +239,18 @@ def main():
                     ("lbreakout2", "lbreakout2", "lbreakout2"), ("ltris", "ltris", "ltris"),
                     ("xbill", "xbill", "xbill"), ("xjump", "xjump", "xjump"),
                     ("chocolate-doom", "chocolate-doom -iwad /usr/share/games/doom/freedoom1.wad -nosound -window", "chocolate-doom")]
+            if os.environ.get("OFFICE_TESTS", "1") == "1":
+                apps += [("abiword", "abiword /usr/share/p3linux/sample.rtf", "abiword"),
+                         ("gnumeric", "gnumeric /usr/share/p3linux/sample.csv", "gnumeric")]
             for name, cmd, proc in apps:
                 sh("(%s >/tmp/app.log 2>&1 &)" % cmd)
-                time.sleep(int(os.environ.get("APP_WAIT", "10")))
+                time.sleep(int(os.environ.get("APP_WAIT", "10")) * (4 if proc in ("abiword", "gnumeric") else 1))
                 rc, _ = sh("pidof %s" % proc)
-                if name in ("dillo", "lbreakout2", "chocolate-doom"):
+                if name in ("dillo", "lbreakout2", "chocolate-doom", "abiword", "gnumeric"):
                     shot("app-" + name.split()[0])
+                if proc in ("abiword", "gnumeric"):
+                    _, out = sh("free -m | grep -E '^Mem:' | tr -s ' '")
+                    check(f"   memory while {name} runs (total used free ...)", True, " ".join(out.split()[-6:]))
                 _, log = sh("tail -2 /tmp/app.log")
                 check(f"   app starts: {name}", rc == 0, "" if rc == 0 else " ".join(log.split())[:150])
                 sh("killall %s 2>/dev/null; sleep 1; killall -9 %s 2>/dev/null; true" % (proc, proc))

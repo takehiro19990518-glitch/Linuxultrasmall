@@ -35,4 +35,5 @@ else
   echo "WARNING: qemu-i386 not found; fontconfig cache not pre-generated"
 fi
 # docs / man pages are useless on a 64MB machine
-rm -rf "$T/usr/share/man" "$T/usr/share/doc" "$T/usr/share/info"
+rm -rf "$T/usr/share/man" "$T/usr/share/doc" "$T/usr/share/info" \
+  "$T/usr/share/help"   # GNOME help needs yelp, which is not included
