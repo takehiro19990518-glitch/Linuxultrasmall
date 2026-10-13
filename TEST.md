@@ -70,8 +70,10 @@ QEMU で当時の機器を模擬し、udev によるドライバ自動読み込�
 | Chocolate Doom + Freedoom | ✅ | ✅ |
 | LBreakout2 | △ 起動はするがメモリ不足になりやすい | ✅ |
 
-- オフィス追加後の ISO（131MB）での結果：**128MB 35/35、256MB 35/35、64MB 34/35**
-  （64MB の 1 件は「OOM 0 件」の項目。詳細は下記）
+- オフィス追加後の ISO（131MB）での結果：**128MB 35/35、256MB 35/35、64MB 34/35（1回目）・33/35（2回目）**
+  - 64MB 1回目：LBreakout2 も起動。失敗は「OOM 0 件」の 1 項目のみ
+  - 64MB 2回目：LBreakout2 がメモリを使い切り、`p3-oomguard` が LBreakout2 を閉じた（「closed lbreakout2 to keep the PC responsive」）。
+    その後の AbiWord・Gnumeric・ネットワーク・再起動・終了はすべて PASS（フリーズしない）
 - AbiWord / Gnumeric / LBreakout2 は Start メニューに「128MB+」と表示し、128MB 未満では起動時に確認ダイアログを出す（`p3-needram`）。
   64MB でも起動はするが、他のアプリと同時に使うとメモリ不足になりやすい
 - 64MB でファイルを開く（`p3-open`）場合、Word/Excel 文書は軽量ビューア（antiword / xls2csv / sc-im）で開く
