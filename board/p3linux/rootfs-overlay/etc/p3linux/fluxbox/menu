@@ -5,7 +5,7 @@
   [exec] (Text Editor) {p3-edit}
   [separator]
   [submenu] (Internet)
-    [exec] (Web Browser - NetSurf) {netsurf-gtk3}
+    [exec] (Web Browser - NetSurf, 96MB+) {p3-web}
     [exec] (Web Browser - Dillo, light) {dillo}
     [exec] (Web Browser - Links) {links -g}
     [exec] (IRC Chat) {xterm -T IRC -e irssi}

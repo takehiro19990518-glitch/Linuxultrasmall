@@ -17,8 +17,8 @@ Buildroot をベースに、カーネルからデスクトップ・アプリま�
 
 ## 入っているもの
 
-- **デスクトップ**：X.Org + Fluxbox、Start メニュー（カテゴリ別）、タスクバー、時計、システム情報
-- **インターネット**：Web ブラウザ（Dillo、Links）、IRC（irssi）、FTP（lftp）、SSH クライアント、wget / curl
+- **デスクトップ**：X.Org + Fluxbox、Damn Small Linux 風の画面（暗い壁紙、左にアプリのアイコン、右上に CPU・メモリ・ネットワークのモニタ、右クリックでメニュー）、Start メニュー（カテゴリ別）、タスクバー、時計、システム情報
+- **インターネット**：Web ブラウザ **NetSurf**（今の CSS に対応、JavaScript は一部のみ。96MB 以上）、軽量ブラウザ（Dillo、Links）、IRC（irssi）、FTP（lftp）、SSH クライアント、wget / curl
 - **オフィス**：ワープロ **AbiWord**（Word .doc/.docx・RTF・OpenDocument .odt の編集）、表計算 **Gnumeric**（Excel .xls/.xlsx・.ods・CSV の編集、グラフ）※どちらも 128MB 以上。
   64MB でも使える軽量版：表計算（sc-im）、テキストエディタ、Word/Excel/PowerPoint 文書の閲覧（antiword / catdoc）、PDF ビューア（MuPDF）、電卓
 - **マルチメディア**：画像ビューア（feh）、音楽再生（mpg123：MP3、sox：WAV/OGG/FLAC）、音量調整（alsamixer）
@@ -72,7 +72,8 @@ copy /b release\P3-Linux.iso.part-aa + release\P3-Linux.iso.part-ab + release\P3
 - Pentium III 実機では未確認
 - HDD イメージからの起動・HDD インストーラは未テスト
 - 日本語入力は未対応（表示のみ）
-- Web ブラウザは軽量なもののみで、JavaScript を多用する最近のサイトは表示が崩れます
+- Firefox・Chrome は SSE2 必須のため Pentium III では動きません。NetSurf で Wikipedia・ニュース・検索などは読めますが、JavaScript を多用するサイト（YouTube、Google の各サービス、SNS 等）は動きません
+- 64MB の PC では「Web Browser」は Dillo で開きます（NetSurf は 64MB では表示まで時間がかかりすぎるため）
 - AbiWord / Gnumeric は 128MB 以上が必要（64MB の PC ではファイルを開くと軽量ビューアが使われます）。印刷・スペルチェックは未対応
 - OpenGL（3D）は未搭載（GTK3 は OpenGL なしで構成）
 - SVG 表示には C 版の旧 librsvg 2.40 / libcroco を使用（Rust 版は SSE2 必須のため）。保守終了版で既知の脆弱性があるため、信頼できない SVG ファイルは開かないでください

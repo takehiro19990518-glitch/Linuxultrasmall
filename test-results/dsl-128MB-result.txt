@@ -1,0 +1,36 @@
+PASS 1. BIOS boot from ISO (SYSLINUX) 
+PASS 2. Linux kernel boot 6.12.111
+PASS 3. root filesystem mount (CD + squashfs + overlay) 
+PASS 4. init (BusyBox init + rc scripts) 
+PASS 5. X.Org start 
+PASS 6. GUI desktop (fluxbox + start menu) 35s after power-on
+PASS    desktop processes (Xorg fluxbox p3-start p3-sysinfo p3-desk) 183 190 194 195 193
+PASS 7. keyboard (Ctrl+Alt+T opens terminal) attempt 1
+PASS 9. terminal (xterm accepts typed command) 
+PASS 8. mouse (PS/2 mouse device in X, pointer injected) 22 log lines
+PASS 10. file manager (p3-files) 
+PASS 11. text editor (p3-edit) 
+PASS    kernel modules loaded automatically Fontconfig warning: using without calling FcInit() lsmod | sed 1d | cut -d' ' -f1 | sort | tr '\n' ' '; echo __END68106__$? e1000 floppy i2c_piix4 i2c_smbus parport parport_pc pcspkr ppdev snd snd_hwdep snd_mpu401_uart snd_opl3_lib snd_pcm snd_rawmidi snd_sb16 snd_sb16_dsp snd_sb_common snd_seq_devi
+PASS    app starts: netsurf 
+PASS    app starts: dillo 
+PASS    app starts: links -g 
+PASS    app starts: mupdf-x11 
+PASS    app starts: feh 
+PASS    app starts: xcalc 
+PASS    app starts: xclock 
+PASS    app starts: sc-im 
+PASS    app starts: lbreakout2 
+PASS    app starts: ltris 
+PASS    app starts: xbill 
+PASS    app starts: xjump 
+PASS    app starts: chocolate-doom 
+PASS    memory while abiword runs (total used free ...) 114 36 10 1 69 72
+PASS    app starts: abiword 
+PASS    memory while gnumeric runs (total used free ...) 114 33 9 1 72 74
+PASS    app starts: gnumeric 
+PASS    stress: 5 more windows open at once (3 xterm, files, edit) 5 app processes
+PASS    memory after stress (total used free shared buff avail) Mem: 114 34 5 1 75 73 / Swap: 0 0 0
+PASS    no out-of-memory kills 0 OOM events
+PASS    network (DHCP + ping gateway) 
+PASS 13. reboot (system comes back) 
+PASS 12. shutdown (poweroff turns the VM off) 

@@ -1,0 +1,8 @@
+#!/bin/sh
+# P3 Linux web browser launcher: NetSurf (modern CSS, some JavaScript) when
+# the PC has enough memory for it, otherwise the lighter Dillo.
+mem=$(awk '/^MemTotal/ {print int($2/1024)}' /proc/meminfo)
+if [ "${mem:-0}" -ge 90 ] && command -v netsurf-gtk3 >/dev/null; then
+  exec netsurf-gtk3 "$@"
+fi
+exec dillo "$@"

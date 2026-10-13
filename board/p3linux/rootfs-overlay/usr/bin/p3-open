@@ -16,7 +16,7 @@ fi
 case "$lc" in
   *.pdf|*.xps|*.epub|*.cbz) exec mupdf-x11 "$f";;
   *.jpg|*.jpeg|*.png|*.gif|*.bmp|*.tif|*.tiff|*.pnm|*.ppm|*.xpm) exec feh -. -g 640x480 "$f";;
-  *.htm|*.html) command -v netsurf-gtk3 >/dev/null && [ "${mem:-0}" -ge 60 ] && exec netsurf-gtk3 "file://$(realpath "$f")"; exec dillo "$f";;
+  *.htm|*.html) command -v netsurf-gtk3 >/dev/null && [ "${mem:-0}" -ge 90 ] && exec netsurf-gtk3 "file://$(realpath "$f")"; exec dillo "$f";;
   *.mp3|*.mp2) exec xterm -T "Music: $(basename "$f")" -e mpg123 -v "$f";;
   *.wav|*.ogg|*.flac|*.au|*.aiff|*.voc) exec xterm -T "Music: $(basename "$f")" -e play "$f";;
   *.doc) view "antiword \"$f\"";;

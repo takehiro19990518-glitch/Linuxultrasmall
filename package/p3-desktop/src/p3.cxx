@@ -120,7 +120,7 @@ static int app_start(int argc, char **argv) {
         {"File Manager", "p3-files"},
         {"Open File...", "p3-openfile"},
         {"_Text Editor", "p3-edit"},
-        {"Internet/Web Browser (NetSurf)", "netsurf-gtk3"},
+        {"Internet/Web Browser (NetSurf) - 96MB+", "p3-web"},
         {"Internet/Web Browser (Dillo, light)", "dillo"},
         {"Internet/Web Browser (Links)", "links -g"},
         {"Internet/IRC Chat (irssi)", "xterm -T IRC -e irssi"},
@@ -185,7 +185,7 @@ static int app_start(int argc, char **argv) {
 static std::string ip_of(const char *ifn);
 struct DeskIcon { const char *label, *glyph, *cmd; unsigned rgb; };
 static const DeskIcon desk_icons[] = {
-    {"Web Browser", "W", "netsurf-gtk3", 0x2e6fd0},
+    {"Web Browser", "W", "p3-web", 0x2e6fd0},
     {"Dillo (light)", "D", "dillo", 0x3b8f3b},
     {"Files", "F", "p3-files", 0xc89a2a},
     {"Terminal", ">_", "xterm", 0x333333},
@@ -273,7 +273,7 @@ public:
         fl_draw("P3 Linux", x, y + 10);
         fl_color(fl_rgb_color(200, 200, 200));
         snprintf(buf, sizeof buf, "%s  kernel %s", u.nodename, u.release);
-        fl_draw(buf, x, y += lh + 4);
+        fl_draw(buf, x, y += lh + 8);
         snprintf(buf, sizeof buf, "Uptime: %ldh %02ldm", si.uptime / 3600, si.uptime / 60 % 60);
         fl_draw(buf, x, y += lh);
         snprintf(buf, sizeof buf, "CPU: %d%%  %s MHz", cpu_pct, mhz.substr(0, mhz.find('.')).c_str());

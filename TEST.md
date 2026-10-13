@@ -58,6 +58,7 @@ QEMU で当時の機器を模擬し、udev によるドライバ自動読み込�
 
 | アプリ | 64MB | 128MB / 256MB |
 |---|---|---|
+| **NetSurf**（Web ブラウザ、ローカル HTML を表示） | △ 起動はするが 40 秒後も表示されず → 64MB では Dillo を使う（`p3-web`） | ✅（日本語表示も確認） |
 | **AbiWord**（ワープロ、RTF を開く） | ✅（available 21MB） | ✅（128MB: available 76MB） |
 | **Gnumeric**（表計算、CSV を開き数式計算） | ✅（available 22MB） | ✅（128MB: available 78MB） |
 | Dillo（Web ブラウザ） | ✅ | ✅ |
@@ -79,6 +80,11 @@ QEMU で当時の機器を模擬し、udev によるドライバ自動読み込�
 - 64MB でファイルを開く（`p3-open`）場合、Word/Excel 文書は軽量ビューア（antiword / xls2csv / sc-im）で開く
 - 結果ファイル：`test-results/office-128MB-result.txt`、`office-256MB-result.txt`、`office-64MB-result.txt`、
   スクリーンショット `test-results/*-abiword.png`、`*-gnumeric.png`
+
+### DSL 風デスクトップ・NetSurf 追加後（ISO 133MB）
+- 64MB 34/36（失敗 2 件はどちらも p3-oomguard が LBreakout2 を閉じたことによるもの。ほかは全て PASS）、128MB 36/36、256MB 36/36
+- デスクトップ常駐の `p3-desk`（アイコン＋モニタ）を含めたメモリ使用量でも 64MB で全アプリ起動を確認
+- スクリーンショット：`test-results/dsl-desktop.png`、`test-results/dsl-netsurf.png`
 
 ### GUI オフィス（GTK3）の構成
 - GTK 3.24（X11 バックエンド）。OpenGL（Mesa）なしで構成（libepoxy は実行時に GL を探すだけ）
