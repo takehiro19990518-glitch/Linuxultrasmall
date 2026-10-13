@@ -42,7 +42,7 @@ Buildroot をベースに、カーネルからデスクトップ・アプリま�
 | `depth8` | 256 色で起動 |
 | `text` | GUI なし（コンソールのみ） |
 
-追加の起動オプション：`p3.res=800x600`（解像度）、`p3.xdriver=vesa`（X ドライバ指定）、`p3.depth=16`、`p3.zram=0|1`、`p3.isasound=0`
+追加の起動オプション：`p3.res=800x600`（解像度）、`p3.xdriver=vesa`（X ドライバ指定）、`p3.depth=16`、`p3.zram=0|1`、`p3.oomguard=0|1`（メモリ不足時に大きなアプリを自動で閉じる。100MB 未満で既定オン）、`p3.isasound=0`
 
 - root のパスワード：`p3linux`
 - 無線 LAN：Start → Settings → Wi-Fi

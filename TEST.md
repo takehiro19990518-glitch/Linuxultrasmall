@@ -20,6 +20,9 @@ QEMU 設定: `qemu-system-i386 -cpu pentium3 -vga std`、IDE HDD + IDE CD-ROM、
 ## 低メモリ対策（64MB 対応）
 - カーネル縮小: 常駐サイズ 22.8MB → 14.2MB（使えるメモリ 42MB → 50MB）
 - RAM 100MB 未満で zram（LZO 圧縮スワップ、RAM の半分）を自動有効化
+- RAM 100MB 未満で `p3-oomguard` を起動：メモリとスワップがほぼ尽きたら、最もメモリを使っているアプリを閉じる
+  （X・ウィンドウマネージャ・システムは対象外）。カーネルの OOM 処理が働く前に数分間フリーズする（スラッシング）のを防ぐ。
+  導入前は 64MB で LBreakout2 起動時に固まり、以降のテストが全滅する回があった
 - フォントキャッシュをビルド時に生成（起動ごとのフォント走査を省く）
 - 画面モード上限: 通常 1024x768、RAM 100MB 未満は 800x600（起動オプション `p3.res=` で変更可）
 
@@ -53,8 +56,10 @@ QEMU で当時の機器を模擬し、udev によるドライバ自動読み込�
 
 各アプリを起動し、数秒後にプロセスが動作していることを確認して終了させる（`scripts/qemu-test.py` の APP_TESTS）。
 
-| アプリ | 64MB | 128MB |
+| アプリ | 64MB | 128MB / 256MB |
 |---|---|---|
+| **AbiWord**（ワープロ、RTF を開く） | ✅（available 21MB） | ✅（128MB: available 76MB） |
+| **Gnumeric**（表計算、CSV を開き数式計算） | ✅（available 22MB） | ✅（128MB: available 78MB） |
 | Dillo（Web ブラウザ） | ✅ | ✅ |
 | Links -g（Web ブラウザ） | ✅ | ✅ |
 | MuPDF（PDF） | ✅ | ✅ |
@@ -63,10 +68,20 @@ QEMU で当時の機器を模擬し、udev によるドライバ自動読み込�
 | sc-im（表計算） | ✅ | ✅ |
 | LTris / XBill / XJump | ✅ | ✅ |
 | Chocolate Doom + Freedoom | ✅ | ✅ |
-| LBreakout2 | ❌ メモリ不足で強制終了（約25MB使用） | ✅ |
+| LBreakout2 | △ 起動はするがメモリ不足になりやすい | ✅ |
 
-- 64MB では LBreakout2 だけが動かないため、Start メニューに「128MB+」と表示し、起動時に「メモリ不足」の確認ダイアログを出す（`p3-needram`）
-- 128MB では全 31 項目 PASS（起動〜デスクトップ〜キーボード・マウス〜各アプリ〜ネットワーク〜再起動・終了）
+- オフィス追加後の ISO（131MB）での結果：**128MB 35/35、256MB 35/35、64MB 34/35**
+  （64MB の 1 件は「OOM 0 件」の項目。詳細は下記）
+- AbiWord / Gnumeric / LBreakout2 は Start メニューに「128MB+」と表示し、128MB 未満では起動時に確認ダイアログを出す（`p3-needram`）。
+  64MB でも起動はするが、他のアプリと同時に使うとメモリ不足になりやすい
+- 64MB でファイルを開く（`p3-open`）場合、Word/Excel 文書は軽量ビューア（antiword / xls2csv / sc-im）で開く
+- 結果ファイル：`test-results/office-128MB-result.txt`、`office-256MB-result.txt`、`office-64MB-result.txt`、
+  スクリーンショット `test-results/*-abiword.png`、`*-gnumeric.png`
+
+### GUI オフィス（GTK3）の構成
+- GTK 3.24（X11 バックエンド）。OpenGL（Mesa）なしで構成（libepoxy は実行時に GL を探すだけ）
+- SVG 描画は C 版の librsvg 2.40 + libcroco（Rust 版 librsvg は i686 で SSE2 を前提にするため不採用）
+- check-image.sh：オフィス追加後も SSE2 チェック PASS（許可リストの追加なし）
 
 ### SSE2 チェックで許可しているもの（実行時に CPU を判定して切り替えるライブラリ）
 libjpeg-turbo、OpenSSL（libcrypto）、xz（liblzma）、libFLAC、libgcc の _Float16 補助関数。

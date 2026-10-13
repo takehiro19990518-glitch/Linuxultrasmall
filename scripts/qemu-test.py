@@ -266,7 +266,11 @@ def main():
         check("   memory after stress (total used free shared buff avail)", True, mem)
         rc, out = sh("dmesg | grep -ciE 'out of memory|oom-kill|killed process'")
         n = out.strip().splitlines()[-1] if out.strip() else "?"
-        check("   no out-of-memory kills", n == "0", f"{n} OOM events")
+        detail = f"{n} OOM events"
+        if n != "0":
+            _, who = sh("dmesg | grep -iE 'p3-oomguard: out of memory|killed process' | sed 's/^.*\\] //' | cut -c1-90")
+            detail += ": " + " | ".join(l.strip() for l in who.splitlines() if l.strip())
+        check("   no out-of-memory kills", n == "0", detail)
         # network
         rc, _ = sh("ifconfig eth0 | grep -q 'inet addr' || udhcpc -i eth0 -n -q -t 5", 40)
         rc, out = sh("ping -c 2 -W 3 10.0.2.2", 20)
