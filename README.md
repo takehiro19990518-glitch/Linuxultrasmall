@@ -58,7 +58,7 @@ cat release/P3-Linux.iso.part-* > P3-Linux.iso
 sha256sum -c release/P3-Linux.iso.sha256
 
 # Windows（コマンドプロンプト）
-copy /b release\P3-Linux.iso.part-aa + release\P3-Linux.iso.part-ab P3-Linux.iso
+copy /b release\P3-Linux.iso.part-aa + release\P3-Linux.iso.part-ab + release\P3-Linux.iso.part-ac P3-Linux.iso
 ```
 
 ## ドキュメント
