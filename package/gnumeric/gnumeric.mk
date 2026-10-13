@@ -12,4 +12,6 @@ GNUMERIC_CONF_OPTS = --disable-nls --disable-introspection --disable-gtk-doc \
 	--without-python --disable-component --disable-schemas-compile
 # itstool only translates the Yelp help, which is not built here
 GNUMERIC_CONF_ENV = ITSTOOL=/bin/true
+# ...so install only the untranslated (C) help
+GNUMERIC_INSTALL_TARGET_OPTS = DESTDIR=$(TARGET_DIR) HELP_LINGUAS= install
 $(eval $(autotools-package))
