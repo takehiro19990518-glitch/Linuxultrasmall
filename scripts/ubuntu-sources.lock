@@ -53,6 +53,7 @@ musl pool/universe/m/musl/musl_1.2.5.orig.tar.gz a9a118bbe84d8764da0ea0d28b3ab3f
 nano pool/main/n/nano/nano_8.7.1.orig.tar.xz 76f0dcb248f2e2f1251d4ecd20fd30fb400a360a3a37c6c340e0a52c2d1cdedf 8.7.1 -
 ncdu pool/universe/n/ncdu/ncdu_1.22.orig.tar.gz 8af3431c09769f2a6e75f2260707d51792f9043db49ca6c3f940adfdc12fe063 1.22 -
 ncurses pool/main/n/ncurses/ncurses_6.6+20251231.orig.tar.gz e280541f4f601b8586bec305976c873fd641607f9bc4254bf661034dcccac4e9 6.6-20251231 -
+netsurf pool/universe/n/netsurf/netsurf_3.10.orig.tar.gz 495adf6b6614ce36fca6c605f7c321f9cb4a3df838043158122678ce2b3325b7 3.10 -
 openjpeg pool/main/o/openjpeg2/openjpeg2_2.5.4.orig.tar.xz 6f6cf917e9587bc2df83aee5b51aa22dd56111640b3bad290b93443b6a4682b7 2.5.4 -
 p7zip pool/universe/p/p7zip/p7zip_16.02+dfsg.orig.tar.xz 50adee7a4259e3492d8b68dfd12bda0ed27e615193a16f10af296f23dc831b14 16.02 -
 pango pool/main/p/pango1.0/pango1.0_1.57.0.orig.tar.xz 890640c841dae77d3ae3d8fe8953784b930fa241b17423e6120c7bfdf8b891e7 1.57.0 -

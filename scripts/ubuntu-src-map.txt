@@ -177,3 +177,4 @@ libepoxy         libepoxy
 libfribidi       fribidi
 pango            pango1.0
 xlib_libXtst     libxtst
+netsurf          netsurf

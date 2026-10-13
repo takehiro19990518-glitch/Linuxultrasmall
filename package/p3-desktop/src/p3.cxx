@@ -4,6 +4,8 @@
 //   p3-edit      simple text editor
 //   p3-sysinfo   system information / welcome window
 //   p3-shutdown  shut down / reboot dialog
+//   p3-desk      desktop: wallpaper, launcher icons, system monitor
+//                (in the style of Damn Small Linux's iDesk + torsmo)
 // Written for low-end hardware: no threads, no images, only FLTK + Xlib.
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -118,7 +120,8 @@ static int app_start(int argc, char **argv) {
         {"File Manager", "p3-files"},
         {"Open File...", "p3-openfile"},
         {"_Text Editor", "p3-edit"},
-        {"Internet/Web Browser (Dillo)", "dillo"},
+        {"Internet/Web Browser (NetSurf)", "netsurf-gtk3"},
+        {"Internet/Web Browser (Dillo, light)", "dillo"},
         {"Internet/Web Browser (Links)", "links -g"},
         {"Internet/IRC Chat (irssi)", "xterm -T IRC -e irssi"},
         {"Internet/FTP (lftp)", "xterm -T FTP -e lftp"},
@@ -171,6 +174,187 @@ static int app_start(int argc, char **argv) {
     w->border(0);
     w->xclass("p3-start");
     w->show(1, argv);
+    (void)argc;
+    return Fl::run();
+}
+
+// ------------------------------------------------------------ p3-desk ----
+// One window below all others (fluxbox layer "Desktop"): DSL-like dark
+// wallpaper, a column of launcher icons on the left and a torsmo-like
+// system monitor in the top-right corner.  Right click: fluxbox root menu.
+static std::string ip_of(const char *ifn);
+struct DeskIcon { const char *label, *glyph, *cmd; unsigned rgb; };
+static const DeskIcon desk_icons[] = {
+    {"Web Browser", "W", "netsurf-gtk3", 0x2e6fd0},
+    {"Dillo (light)", "D", "dillo", 0x3b8f3b},
+    {"Files", "F", "p3-files", 0xc89a2a},
+    {"Terminal", ">_", "xterm", 0x333333},
+    {"Editor", "E", "p3-edit", 0x6a6ad0},
+    {"Word (AbiWord)", "A", "p3-needram 128 abiword", 0x2b5797},
+    {"Sheet (Gnumeric)", "G", "p3-needram 128 gnumeric", 0x1e7145},
+    {"Open File", "O", "p3-openfile", 0x8a5a2a},
+    {"Doom", "DM", "chocolate-doom -iwad /usr/share/games/doom/freedoom1.wad", 0xa02020},
+    {"Wi-Fi", "Wi", "xterm -T Wi-Fi -e p3-wifi", 0x2a8a9a},
+    {"System Info", "i", "p3-sysinfo", 0x555577},
+    {"Shut Down", "O|", "p3-shutdown", 0x993333},
+};
+
+struct CpuSample { unsigned long long busy = 0, total = 0; };
+static CpuSample cpu_read() {
+    CpuSample c;
+    std::string s = read_file("/proc/stat");
+    unsigned long long v[8] = {0};
+    if (sscanf(s.c_str(), "cpu %llu %llu %llu %llu %llu %llu %llu %llu",
+               &v[0], &v[1], &v[2], &v[3], &v[4], &v[5], &v[6], &v[7]) >= 4) {
+        for (int i = 0; i < 8; i++) c.total += v[i];
+        c.busy = c.total - v[3] - v[4];
+    }
+    return c;
+}
+static unsigned long long net_bytes(const char *ifn, int tx) {
+    char p[96];
+    snprintf(p, sizeof p, "/sys/class/net/%s/statistics/%s_bytes", ifn, tx ? "tx" : "rx");
+    return strtoull(trim(read_file(p)).c_str(), 0, 10);
+}
+
+class Desk : public Fl_Window {
+    int hover = -1, pressed = -1;
+    CpuSample last_cpu;
+    unsigned long long last_rx = 0, last_tx = 0;
+    int cpu_pct = 0;
+    double rx_rate = 0, tx_rate = 0;
+    static const int IW = 88, IH = 74, TOP = 16, LEFT = 12;
+public:
+    Desk(int W, int H) : Fl_Window(0, 0, W, H, "p3-desk") {
+        last_cpu = cpu_read();
+        last_rx = net_bytes("eth0", 0); last_tx = net_bytes("eth0", 1);
+        Fl::add_timeout(2.0, tick, this);
+    }
+    int rows() const { int r = (h() - TOP - 40) / IH; return r < 1 ? 1 : r; }
+    int icon_at(int x, int y) const {
+        int n = sizeof desk_icons / sizeof desk_icons[0];
+        for (int i = 0; i < n; i++) {
+            int ix = LEFT + (i / rows()) * IW, iy = TOP + (i % rows()) * IH;
+            if (x >= ix && x < ix + IW && y >= iy && y < iy + IH) return i;
+        }
+        return -1;
+    }
+    static void tick(void *v) {
+        Desk *d = (Desk *)v;
+        CpuSample c = cpu_read();
+        if (c.total > d->last_cpu.total)
+            d->cpu_pct = (int)(100 * (c.busy - d->last_cpu.busy) / (c.total - d->last_cpu.total));
+        d->last_cpu = c;
+        unsigned long long rx = net_bytes("eth0", 0), tx = net_bytes("eth0", 1);
+        d->rx_rate = rx >= d->last_rx ? (rx - d->last_rx) / 2048.0 : 0;
+        d->tx_rate = tx >= d->last_tx ? (tx - d->last_tx) / 2048.0 : 0;
+        d->last_rx = rx; d->last_tx = tx;
+        d->damage(FL_DAMAGE_USER1, d->w() - 300, 0, 300, 260);
+        Fl::repeat_timeout(2.0, tick, v);
+    }
+    void bar(int x, int y, int w, int pct, Fl_Color c) {
+        if (pct < 0) pct = 0;
+        if (pct > 100) pct = 100;
+        fl_color(fl_rgb_color(60, 60, 60)); fl_rectf(x, y, w, 7);
+        fl_color(c); fl_rectf(x, y, w * pct / 100, 7);
+    }
+    void draw_monitor() {
+        int x = w() - 290, y = 12, lh = 16;
+        fl_color(fl_rgb_color(28, 30, 34)); fl_rectf(x - 8, 0, 300, 250);
+        struct utsname u; uname(&u);
+        struct sysinfo si; sysinfo(&si);
+        std::string mi = read_file("/proc/meminfo");
+        long mt = atol(field(mi, "MemTotal").c_str()) / 1024, ma = atol(field(mi, "MemAvailable").c_str()) / 1024;
+        long st = atol(field(mi, "SwapTotal").c_str()) / 1024, sf = atol(field(mi, "SwapFree").c_str()) / 1024;
+        std::string mhz = field(read_file("/proc/cpuinfo"), "cpu MHz");
+        char buf[160];
+        fl_font(FL_COURIER, 12);
+        fl_color(fl_rgb_color(255, 204, 0));
+        fl_draw("P3 Linux", x, y + 10);
+        fl_color(fl_rgb_color(200, 200, 200));
+        snprintf(buf, sizeof buf, "%s  kernel %s", u.nodename, u.release);
+        fl_draw(buf, x, y += lh + 4);
+        snprintf(buf, sizeof buf, "Uptime: %ldh %02ldm", si.uptime / 3600, si.uptime / 60 % 60);
+        fl_draw(buf, x, y += lh);
+        snprintf(buf, sizeof buf, "CPU: %d%%  %s MHz", cpu_pct, mhz.substr(0, mhz.find('.')).c_str());
+        fl_draw(buf, x, y += lh); bar(x, y + 4, 270, cpu_pct, fl_rgb_color(90, 170, 255));
+        y += 10;
+        snprintf(buf, sizeof buf, "RAM: %ld / %ld MB used", mt - ma, mt);
+        fl_draw(buf, x, y += lh); bar(x, y + 4, 270, mt ? (int)(100 * (mt - ma) / mt) : 0, fl_rgb_color(110, 200, 110));
+        y += 10;
+        if (st > 0) {
+            snprintf(buf, sizeof buf, "Swap: %ld / %ld MB (zram)", st - sf, st);
+            fl_draw(buf, x, y += lh); bar(x, y + 4, 270, (int)(100 * (st - sf) / st), fl_rgb_color(230, 150, 60));
+            y += 10;
+        }
+        std::string ip = ip_of("eth0");
+        if (ip.empty()) ip = ip_of("wlan0");
+        snprintf(buf, sizeof buf, "Net: %s", ip.empty() ? "not connected" : ip.c_str());
+        fl_draw(buf, x, y += lh);
+        snprintf(buf, sizeof buf, "     down %.1f KB/s  up %.1f KB/s", rx_rate, tx_rate);
+        fl_draw(buf, x, y += lh);
+        fl_color(fl_rgb_color(120, 120, 120));
+        fl_draw("Right click: menu", x, y += lh + 4);
+    }
+    void draw_icon(int i) {
+        const DeskIcon &d = desk_icons[i];
+        int ix = LEFT + (i / rows()) * IW, iy = TOP + (i % rows()) * IH;
+        fl_color(fl_rgb_color(28, 30, 34)); fl_rectf(ix, iy, IW, IH);
+        if (i == hover) { fl_color(fl_rgb_color(55, 60, 70)); fl_rectf(ix + 2, iy, IW - 4, IH - 2); }
+        int tx = ix + (IW - 40) / 2, ty = iy + 4 + (i == pressed);
+        fl_color(fl_rgb_color(d.rgb >> 16, (d.rgb >> 8) & 255, d.rgb & 255));
+        fl_rectf(tx, ty, 40, 40);
+        fl_color(fl_rgb_color(230, 230, 230)); fl_rect(tx, ty, 40, 40);
+        fl_font(FL_HELVETICA_BOLD, 18); fl_color(FL_WHITE);
+        fl_draw(d.glyph, tx, ty, 40, 40, FL_ALIGN_CENTER);
+        fl_font(FL_HELVETICA, 11); fl_color(fl_rgb_color(235, 235, 235));
+        fl_draw(d.label, ix, ty + 42, IW, 16, FL_ALIGN_CENTER | FL_ALIGN_CLIP);
+    }
+    void draw() override {
+        int n = sizeof desk_icons / sizeof desk_icons[0];
+        if (damage() & ~FL_DAMAGE_USER1) {
+            fl_color(fl_rgb_color(28, 30, 34)); fl_rectf(0, 0, w(), h());
+            // big faint logo, bottom right (like DSL's wallpaper)
+            int lx = w() - 330, ly = h() - 150;
+            const Fl_Color stripes[4] = {fl_rgb_color(160, 50, 40), fl_rgb_color(180, 120, 30),
+                                         fl_rgb_color(50, 120, 60), fl_rgb_color(40, 80, 140)};
+            for (int i = 0; i < 4; i++) { fl_color(stripes[i]); fl_rectf(lx + i * 16, ly, 12, 70); }
+            fl_font(FL_HELVETICA_BOLD, 44); fl_color(fl_rgb_color(70, 74, 82));
+            fl_draw("P3 Linux", lx + 76, ly + 50);
+            fl_font(FL_HELVETICA, 14);
+            fl_draw("small Linux for Pentium III", lx + 80, ly + 72);
+            for (int i = 0; i < n; i++) draw_icon(i);
+        }
+        draw_monitor();
+    }
+    int handle(int e) override {
+        int i;
+        switch (e) {
+        case FL_MOVE: case FL_ENTER: case FL_LEAVE:
+            i = e == FL_LEAVE ? -1 : icon_at(Fl::event_x(), Fl::event_y());
+            if (i != hover) { hover = i; redraw(); }
+            return 1;
+        case FL_PUSH:
+            if (Fl::event_button() == 3) { spawn("fluxbox-remote RootMenu"); return 1; }
+            pressed = icon_at(Fl::event_x(), Fl::event_y());
+            if (pressed >= 0) redraw();
+            return 1;
+        case FL_RELEASE:
+            i = icon_at(Fl::event_x(), Fl::event_y());
+            if (i >= 0 && i == pressed) spawn(desk_icons[i].cmd);
+            pressed = -1; redraw();
+            return 1;
+        }
+        return Fl_Window::handle(e);
+    }
+};
+
+static int app_desk(int argc, char **argv) {
+    Desk *d = new Desk(Fl::w(), Fl::h());
+    d->end();
+    d->border(0);
+    d->xclass("p3-desk");
+    d->show(1, argv);
     (void)argc;
     return Fl::run();
 }
@@ -535,6 +719,7 @@ int main(int argc, char **argv) {
     if (me == "p3-shutdown") return app_shutdown(argc, argv);
     if (me == "p3-openfile") return app_openfile(argc, argv);
     if (me == "p3-needram") return app_needram(argc, argv);
+    if (me == "p3-desk") return app_desk(argc, argv);
     fprintf(stderr, "usage: p3-desktop {p3-start|p3-files|p3-edit|p3-sysinfo|p3-shutdown}\n");
     return 1;
 }

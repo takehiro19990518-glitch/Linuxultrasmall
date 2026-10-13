@@ -7,3 +7,12 @@
   [Position]     (LowerLeft) {0 0}
   [Tab]          {no}
 [end]
+[app] (class=p3-desk)
+  [Deco]         {NONE}
+  [Sticky]       {yes}
+  [Layer]        {12}
+  [FocusHidden]  {yes}
+  [IconHidden]   {yes}
+  [Position]     (UpperLeft) {0 0}
+  [Tab]          {no}
+[end]

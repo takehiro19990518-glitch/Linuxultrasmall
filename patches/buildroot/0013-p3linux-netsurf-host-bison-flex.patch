@@ -1,0 +1,27 @@
+diff --git a/package/netsurf/netsurf.mk b/package/netsurf/netsurf.mk
+index 383cd8ab..7b97abea 100644
+--- a/package/netsurf/netsurf.mk
++++ b/package/netsurf/netsurf.mk
+@@ -11,8 +11,10 @@ NETSURF_LICENSE = GPL-2.0
+ NETSURF_LICENSE_FILES = netsurf/COPYING
+ NETSURF_CPE_ID_VENDOR = netsurf-browser
+ # host-vim needed for the xxd utility
++# P3LINUX: bison and flex come from the build host (Ubuntu's bison source
++# lacks the docs needed to build host-bison)
+ NETSURF_DEPENDENCIES = expat jpeg libpng \
+-	host-bison host-flex host-gperf host-pkgconf host-vim
++	host-gperf host-pkgconf host-vim
+ 
+ # internal duktape doesn't build with BR2_OPTIMIZE_FAST
+ ifeq ($(BR2_OPTIMIZE_FAST),y)
+@@ -96,8 +98,8 @@ NETSURF_MAKE_ENV = \
+ 
+ NETSURF_MAKE_OPTS = \
+ 	TARGET=$(NETSURF_FRONTEND) \
+-	BISON="$(HOST_DIR)/bin/bison" \
+-	FLEX="$(HOST_DIR)/bin/flex" \
++	BISON=bison \
++	FLEX=flex \
+ 	PKG_CONFIG="$(PKG_CONFIG_HOST_BINARY)" \
+ 	BUILD_CC="$(HOSTCC)" \
+ 	CC="$(TARGET_CC)" \
