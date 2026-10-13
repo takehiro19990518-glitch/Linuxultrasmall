@@ -1,0 +1,17 @@
+#!/bin/sh
+# P3 Linux low-memory support: on machines with less than 100MB of RAM, run
+# p3-oomguard, which closes the biggest application before the PC starts
+# thrashing.  Kernel parameter "p3.oomguard=0" disables it, "=1" forces it.
+case "$1" in
+  start)
+    mem=$(awk '/^MemTotal:/ {print int($2/1024)}' /proc/meminfo)
+    want=0; [ "$mem" -lt 100 ] && want=1
+    for a in $(cat /proc/cmdline); do case $a in p3.oomguard=*) want=${a#p3.oomguard=};; esac; done
+    [ "$want" = 1 ] || exit 0
+    start-stop-daemon -S -b -q -x /usr/sbin/p3-oomguard && echo "Low memory (${mem}MB): started p3-oomguard"
+    ;;
+  stop)
+    start-stop-daemon -K -q -x /usr/sbin/p3-oomguard
+    ;;
+esac
+exit 0
