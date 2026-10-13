@@ -1,14 +1,19 @@
 package,version,license,license_files
+abiword,3.0.8,GPL-2.0+,COPYING
 alsa-lib,1.2.15.3,"LGPL-2.1+ (library), GPL-2.0+ (aserver)",COPYING aserver/COPYING
 alsa-utils,1.2.15.2,GPL-2.0,COPYING
 antiword,0.37,GPL-2.0+,Docs/COPYING
+at-spi2-core,2.60.0,LGPL-2.1+,COPYING
+boost,1.83.0,BSL-1.0,LICENSE_1_0.txt
 busybox,1.37.0,"GPL-2.0, bzip2-1.0.6",LICENSE archival/libarchive/bz/LICENSE
 bzip2,1.0.8,bzip2 license,LICENSE
 ca-certificates,20260223,"GPL-2.0+ (script), MPL-2.0 (data)",debian/copyright
+cairo,1.18.4,LGPL-2.1 or MPL-1.1 (library),COPYING COPYING-LGPL-2.1 COPYING-MPL-1.1
 catdoc,0.95,GPL-2.0+,COPYING
 cdrkit,1.1.11,GPL-2.0,COPYING
 chocolate-doom,3.1.1,GPL-2.0+,COPYING.md
 cifs-utils,7.4,GPL-3.0+,COPYING
+dbus,1.16.2,"AFL-2.0 or GPL-2.0+ (dbus/dbus-arch-deps.h.in), AFL-2.1 or GPL-2.0+ (library, daemon, some tools), GPL-2.0+ (some tools), MIT (some files), Public Domain (dbus-sha), TCL (dbus-hash), LicenseRef-CMakeScripts (cmake/modules/FindGLIB2.cmake), LicenseRef-GAP (dbus/versioninfo.rc.in)",COPYING LICENSES/AFL-2.0.txt LICENSES/AFL-2.1.txt LICENSES/GPL-2.0-or-later.txt LICENSES/LicenseRef-CMakeScripts.txt LICENSES/LicenseRef-GAP.txt LICENSES/LicenseRef-pycrypto-orig.txt LICENSES/MIT.txt LICENSES/TCL.txt
 dejavu,2.37,unknown,LICENSE
 dillo,3.0.5,GPL-3.0+,COPYING
 dosfstools,4.2,GPL-3.0+,COPYING
@@ -27,7 +32,10 @@ fonts-vlgothic,20220612,"mplus, BSD-3-Clause",LICENSE.en LICENSE_E.mplus
 freedoom,0.13.0,BSD-3-Clause,COPYING.txt
 freetype,2.14.2,FTL or GPL-2.0+,LICENSE.TXT docs/FTL.TXT docs/GPLv2.TXT
 gcc-final,15.2.0,GPL-3.0-with-GCC-exception,COPYING.RUNTIME
+gdk-pixbuf,2.42.12,LGPL-2.1+,COPYING
 gnuchess,6.2.9,GPL-3.0+,COPYING
+gnumeric,1.12.57,GPL-2.0 or GPL-3.0,COPYING
+goffice,0.10.57,GPL-2.0 or GPL-3.0,COPYING
 gumbo-parser,0.13.0,Apache-2.0,doc/COPYING
 harfbuzz,14.3.1,"MIT, ISC (ucdn library)",COPYING
 hdparm,9.65,BSD-Style,LICENSE.TXT
@@ -45,22 +53,30 @@ lcms2,2.19.1,MIT,LICENSE
 less,668,GPL-3.0+,COPYING
 lftp,4.9.3,GPL-3.0+,COPYING
 libcap,2.75,GPL-2.0 or BSD-3-Clause,License
+libcroco3,0.6.13,LGPL-2.0,COPYING.LIB
 libcurl,8.18.0,curl,COPYING
 libdrm,2.4.131,MIT,data/meson.build
+libepoxy,1.5.10,MIT,COPYING
 libevdev,1.13.6,MIT,COPYING
 libevent,2.1.13,"BSD-3-Clause, OpenBSD",LICENSE
 libffi,3.8.0,MIT,LICENSE
+libfribidi,1.0.16,LGPL-2.1+,COPYING
 libgcrypt,1.12.0,LGPL-2.1+,COPYING.LIB
 libglib2,2.88.0,LGPL-2.1+,COPYING
 libgpg-error,1.58,"GPL-2.0+, LGPL-2.1+",COPYING COPYING.LIB
+libgsf,1.14.53,LGPL-2.1,COPYING
+libgtk3,3.24.52,LGPL-2.0+,COPYING
 libnl,3.12.0,LGPL-2.1+,COPYING
 libopenssl,3.6.4,Apache-2.0,LICENSE.txt
 libpciaccess,0.18.1,MIT,COPYING
 libpng,1.6.58,Libpng-2.0,LICENSE
 libpthread-stubs,0.5,MIT,COPYING
+librsvg-legacy,2.40.20,LGPL-2.0+,COPYING.LIB
 libtalloc,2.4.2,LGPL-3.0+,LICENSE
 libusb,1.0.30,LGPL-2.1+,COPYING
 libxcb,1.17.0,MIT,COPYING
+libxml2,2.15.2,MIT,Copyright
+libxslt,1.1.45,MIT,Copyright
 libzlib,1.3.1,Zlib,LICENSE
 links,2.29,GPL-2.0+,COPYING
 linux,v6.12.111,GPL-2.0,COPYING LICENSES/preferred/GPL-2.0 LICENSES/exceptions/Linux-syscall-note
@@ -80,6 +96,7 @@ openjpeg,2.5.4,BSD-2-Clause,LICENSE
 p3-desktop,1.0,MIT,
 p3-firmware,afabaf773c4c2e2c841429933a6a084a5af4d14d,Redistributable firmware (see WHENCE),
 p7zip,16.02,LGPL-2.1+ with unRAR restriction,DOC/License.txt
+pango,1.57.0,LGPL-2.0+,COPYING
 parted,3.6,GPL-3.0+,COPYING
 pciutils,3.14.0,GPL-2.0+,COPYING
 pcre2,10.47,BSD-3-Clause,LICENCE.md
@@ -108,6 +125,7 @@ wget,1.25.0,GPL-3.0+,COPYING
 wireless-regdb,2026.05.30,ISC,LICENSE
 wireless_tools,30.pre9,GPL-2.0,COPYING
 wpa_supplicant,2.11,BSD-3-Clause,README
+wv,1.2.9,GPL-2.0+,COPYING
 xapp_xcalc,1.1.2,MIT,COPYING
 xapp_xclock,1.1.1,MIT,COPYING
 xapp_xkbcomp,1.4.3,MIT,COPYING
@@ -152,6 +170,7 @@ xlib_libXrandr,1.5.4,MIT,COPYING
 xlib_libXrender,0.9.12,MIT,COPYING
 xlib_libXres,1.2.1,MIT,COPYING
 xlib_libXt,1.2.1,MIT,COPYING
+xlib_libXtst,1.2.5,MIT,COPYING
 xlib_libXxf86vm,1.1.4,MIT,COPYING
 xlib_libfontenc,1.1.8,MIT,COPYING
 xlib_libxcvt,0.1.3,MIT,COPYING
