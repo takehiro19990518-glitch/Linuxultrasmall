@@ -6,11 +6,11 @@ ABIWORD_SOURCE = abiword_$(ABIWORD_VERSION)+ds.orig.tar.xz
 ABIWORD_SITE = http://archive.ubuntu.com/ubuntu/pool/universe/a/abiword
 ABIWORD_LICENSE = GPL-2.0+
 ABIWORD_LICENSE_FILES = COPYING
-ABIWORD_DEPENDENCIES = host-pkgconf boost libfribidi libgsf libgtk3 \
+ABIWORD_DEPENDENCIES = host-autoconf-archive host-pkgconf boost libfribidi libgsf libgtk3 \
 	librsvg-legacy libxslt wv
 ABIWORD_AUTORECONF = YES
 # autoconf-archive macros used by configure.ac (not shipped in the tarball)
-ABIWORD_AUTORECONF_OPTS = -I $(ABIWORD_PKGDIR)/m4
+ABIWORD_AUTORECONF_OPTS = --include=$(HOST_DIR)/share/autoconf-archive
 ABIWORD_CONF_OPTS = --disable-default-plugins \
 	--enable-plugins="opendocument openxml" \
 	--disable-spell --disable-print --without-goffice --without-gio \
