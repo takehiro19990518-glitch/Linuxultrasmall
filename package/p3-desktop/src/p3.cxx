@@ -190,8 +190,8 @@ static const DeskIcon desk_icons[] = {
     {"Files", "F", "p3-files", 0xc89a2a},
     {"Terminal", ">_", "xterm", 0x333333},
     {"Editor", "E", "p3-edit", 0x6a6ad0},
-    {"Word (AbiWord)", "A", "p3-needram 128 abiword", 0x2b5797},
-    {"Sheet (Gnumeric)", "G", "p3-needram 128 gnumeric", 0x1e7145},
+    {"AbiWord", "A", "p3-needram 128 abiword", 0x2b5797},
+    {"Gnumeric", "G", "p3-needram 128 gnumeric", 0x1e7145},
     {"Open File", "O", "p3-openfile", 0x8a5a2a},
     {"Doom", "DM", "chocolate-doom -iwad /usr/share/games/doom/freedoom1.wad", 0xa02020},
     {"Wi-Fi", "Wi", "xterm -T Wi-Fi -e p3-wifi", 0x2a8a9a},
@@ -350,7 +350,9 @@ public:
 };
 
 static int app_desk(int argc, char **argv) {
-    Desk *d = new Desk(Fl::w(), Fl::h());
+    // leave the bottom 24 pixels to the taskbar, otherwise fluxbox moves
+    // the window up to keep it clear of the toolbar
+    Desk *d = new Desk(Fl::w(), Fl::h() - 24);
     d->end();
     d->border(0);
     d->xclass("p3-desk");
