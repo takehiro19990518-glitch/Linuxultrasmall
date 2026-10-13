@@ -10,4 +10,6 @@ GNUMERIC_DEPENDENCIES = host-pkgconf host-intltool host-libxslt goffice
 GNUMERIC_CONF_OPTS = --disable-nls --disable-introspection --disable-gtk-doc \
 	--without-gda --without-psiconv --without-paradox --without-perl \
 	--without-python --disable-component --disable-schemas-compile
+# itstool only translates the Yelp help, which is not built here
+GNUMERIC_CONF_ENV = ITSTOOL=/bin/true
 $(eval $(autotools-package))
