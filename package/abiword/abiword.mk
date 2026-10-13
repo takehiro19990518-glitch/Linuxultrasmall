@@ -9,6 +9,8 @@ ABIWORD_LICENSE_FILES = COPYING
 ABIWORD_DEPENDENCIES = host-pkgconf boost libfribidi libgsf libgtk3 \
 	librsvg-legacy libxslt wv
 ABIWORD_AUTORECONF = YES
+# autoconf-archive macros used by configure.ac (not shipped in the tarball)
+ABIWORD_AUTORECONF_OPTS = -I $(ABIWORD_PKGDIR)/m4
 ABIWORD_CONF_OPTS = --disable-default-plugins \
 	--enable-plugins="opendocument openxml" \
 	--disable-spell --disable-print --without-goffice --without-gio \
