@@ -169,8 +169,8 @@ def main():
         S.send("p3linux\n")
         S.expect(r"# ", 20)
         sh("export DISPLAY=:0 PS1='# '; stty cols 200; dmesg -n 1")
-        _, out = sh("pidof Xorg fluxbox p3-start p3-sysinfo")
-        check("   desktop processes (Xorg fluxbox p3-start p3-sysinfo)", len(out.split()) >= 3, out.strip())
+        _, out = sh("pidof Xorg fluxbox p3-start p3-sysinfo p3-desk")
+        check("   desktop processes (Xorg fluxbox p3-start p3-sysinfo p3-desk)", len(out.split()) >= 4, out.strip())
         # 7. keyboard: Ctrl+Alt+T is bound to xterm in fluxbox
         sh("killall p3-sysinfo")
         tries = 0
@@ -230,7 +230,8 @@ def main():
         # applications: start each one, check it is still running, close it
         if os.environ.get("APP_TESTS", "1") == "1":
             sh("killall xterm p3-files p3-edit 2>/dev/null; true")
-            apps = [("dillo", "dillo /usr/share/p3linux/welcome.html", "dillo"),
+            apps = [("netsurf", "netsurf-gtk3 file:///usr/share/p3linux/welcome.html", "netsurf-gtk3"),
+                    ("dillo", "dillo /usr/share/p3linux/welcome.html", "dillo"),
                     ("links -g", "links -g /usr/share/p3linux/welcome.html", "links"),
                     ("mupdf-x11", "mupdf-x11 /usr/share/p3linux/sample.pdf", "mupdf-x11"),
                     ("feh", "feh -g 320x240 /usr/share/p3linux/sample.png", "feh"),
@@ -244,9 +245,9 @@ def main():
                          ("gnumeric", "gnumeric /usr/share/p3linux/sample.csv", "gnumeric")]
             for name, cmd, proc in apps:
                 sh("(%s >/tmp/app.log 2>&1 &)" % cmd)
-                time.sleep(int(os.environ.get("APP_WAIT", "10")) * (4 if proc in ("abiword", "gnumeric") else 1))
+                time.sleep(int(os.environ.get("APP_WAIT", "10")) * (4 if proc in ("abiword", "gnumeric", "netsurf-gtk3") else 1))
                 rc, _ = sh("pidof %s" % proc)
-                if name in ("dillo", "lbreakout2", "chocolate-doom", "abiword", "gnumeric"):
+                if name in ("netsurf", "dillo", "lbreakout2", "chocolate-doom", "abiword", "gnumeric"):
                     shot("app-" + name.split()[0])
                 if proc in ("abiword", "gnumeric"):
                     _, out = sh("free -m | grep -E '^Mem:' | tr -s ' '")
