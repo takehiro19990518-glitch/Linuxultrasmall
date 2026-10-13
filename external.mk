@@ -57,3 +57,12 @@ define P3_RSYNC_PLACEHOLDERS
 	for d in zlib popt; do mkdir -p $(@D)/$$d; [ -f $(@D)/$$d/dummy.in ] || : > $(@D)/$$d/dummy.in; done
 endef
 RSYNC_POST_PATCH_HOOKS += P3_RSYNC_PLACEHOLDERS
+
+# NetSurf: the build host's gdk-pixbuf has no XPM loader, so the window
+# icon resource is replaced by the same image in PNG format (the resource
+# name stays netsurf.xpm; gdk-pixbuf detects the format from the content)
+define P3_NETSURF_PNG_ICON
+	cp $(BR2_EXTERNAL_P3LINUX_PATH)/board/p3linux/netsurf/netsurf-icon.png \
+		$(@D)/netsurf/frontends/gtk/res/netsurf.xpm
+endef
+NETSURF_POST_PATCH_HOOKS += P3_NETSURF_PNG_ICON
